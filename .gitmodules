@@ -1,0 +1,3 @@
+[submodule "overfast-api"]
+	path = overfast-api
+	url = https://github.com/TeKrop/overfast-api.git
