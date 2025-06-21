@@ -1,0 +1,9 @@
+# MongoDB data directory
+data/db/
+data\db\
+
+# Docker volumes and database files
+*.wt
+*.lock
+*.bson
+mongod.lock
