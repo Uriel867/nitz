@@ -52,8 +52,17 @@ class TrackerGGScraper:
 
         return data
     
-    async def _request(self, params):
-        with self.scraper.get(self.base_url, params=params) as response:
+    async def _scrape_page(
+            self, 
+            page: int, 
+            query_params: dict
+        ):
+        query_params['page'] = page
+        
+        return await self._request(url=self.base_url, params=query_params)
+    
+    async def _request(self, url, params):
+        with self.scraper.get(url, params=params) as response:
             return response.text
         
     def _parse_text(self, text):
@@ -72,12 +81,3 @@ class TrackerGGScraper:
             })
         
         return data
-    
-    async def _scrape_page(
-            self, 
-            page: int, 
-            query_params: dict
-        ):
-        query_params['page'] = page
-        
-        return await self._request(params=query_params)
