@@ -1,0 +1,22 @@
+# deploying the built in api
+include:
+  - overfast-api/docker-compose.yml
+
+services:
+  scraping-service:
+    build: infra/scraping-service/
+    entrypoint: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+    volumes:
+      - ./infra/scraping-service/src:/workspace/src
+    # don't start if overfast api hasn't started yet
+    depends_on:
+      app:
+        condition: service_started
+    ports:
+      - "81:8080"
+    # checking service is up every 5 seconds
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider --quiet http://0.0.0.0:8000 || exit 1"]
+      interval: 5s
+      timeout: 5s
+    
