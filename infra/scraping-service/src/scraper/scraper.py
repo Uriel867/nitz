@@ -2,11 +2,11 @@ import requests
 from bs4 import BeautifulSoup
 import cloudscraper
 
-import time
+from io import TextIOWrapper
 
 
 
-class OverwatchScraper:
+class TrackerGGScraper:
     # https://tracker.gg/overwatch/leaderboards/stats/all/Eliminations?page=100&plat=mouseKeyboard&gamemode=competitive
     def __init__(self, base_url='https://tracker.gg/overwatch/leaderboards/stats/all/Eliminations'):
         self.base_url = base_url
@@ -19,7 +19,7 @@ class OverwatchScraper:
             }
         )
         
-    async def get_data_from_page(self, start_page: int, end_page: int, platform: str, game_mode: str):
+    async def get_data_from_page(self, start_page: int, end_page: int, platform: str, game_mode: str, write_to_file: bool):
         # container to hold all the retrieved data
         data = []
 
@@ -29,35 +29,60 @@ class OverwatchScraper:
             'gamemode': game_mode
         }
 
-        # writing to file block - TODO: change to reporting to DB
-        with open('./users_quickplay.txt', 'a') as f:
-            # traversing all pages and retrieving the data
+        if write_to_file:
+            # writing to file block - TODO: change to reporting to DB
+            with open('./users_test.txt', 'a') as f:
+                # traversing all pages and retrieving the data
+                for page in range(start_page, end_page + 1):
+                    await self._scrape_pages(
+                        current_page=page,
+                        query_params=params,
+                        data=data,
+                        write_to_file=write_to_file,
+                        file=f
+                    )
+                # sleeping to avoid IP block
+                # time.sleep(1)
+        else:
+            # not writing to file
             for page in range(start_page, end_page + 1):
-                params['page'] = page
-                # retrieving the data
-                response = self.scraper.get(self.base_url, params=params)
-                # only appending the data if request was successful
-                if response.status_code == 200:
-                    print(f'Appending data from page {page}...')
-                    soup = BeautifulSoup(response.text, 'html.parser')
-                    # extracting usernames and battle tags values from the html response
-                    usernames = soup.find_all('span', class_=['trn-ign__username', 'fit-long-username'])
-                    tags = soup.find_all('span', class_='trn-ign__discriminator')
+                await self._scrape_pages(
+                    current_page=page,
+                    query_params=params,
+                    data=data,
+                    write_to_file=write_to_file
+                )
 
-                    # appending each username#tag to the data container and writing to file - TODO: change to reporting to DB
-                    for i in range(len(usernames)):
-                        data.append({
-                            'username': usernames[i].get_text(strip=True),
-                            'tag': tags[i].get_text(strip=True)
-                        })
-                        f.write(f'username: {data[-1]['username']}\ntag: {data[-1]['tag']}\n\n')
-                else:
-                    print(f'Request failed on page {page}...')
-                    continue
-            
-            # sleeping to avoid IP block
-            # time.sleep(1)
+        return data[:100]
+    
+    async def _scrape_pages(
+            self, 
+            current_page: int, 
+            query_params: dict, 
+            data: list, 
+            write_to_file: bool, 
+            file: TextIOWrapper=None
+        ):
+        query_params['page'] = current_page
+        # retrieving the data
+        response = self.scraper.get(self.base_url, params=query_params)
+        # only appending the data if request was successful
+        if response.status_code == 200:
+            print(f'Appending data from page {current_page}...')
+            soup = BeautifulSoup(response.text, 'html.parser')
+            # extracting usernames and battle tags values from the html response
+            usernames = soup.find_all('span', class_=['trn-ign__username', 'fit-long-username'])
+            tags = soup.find_all('span', class_='trn-ign__discriminator')
 
-        return data
+            # appending each username#tag to the data container and writing to file - TODO: change to reporting to DB
+            for i in range(len(usernames)):
+                data.append({
+                    'username': usernames[i].get_text(strip=True),
+                    'tag': tags[i].get_text(strip=True)
+                })
+                if write_to_file:
+                    file.write(f'username: {data[-1]['username']}\ntag: {data[-1]['tag']}\n\n')
+        else:
+            print(f'Request failed on page {current_page}...')
        
 

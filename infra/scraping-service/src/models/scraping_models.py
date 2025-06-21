@@ -1,17 +1,19 @@
-from pydantic import BaseModel
-from enum import Enum
+from pydantic import BaseModel, Field
+from enum import StrEnum
+from fastapi import Query
 
-class TrackerGGPlatform(str, Enum):
+class TrackerGGPlatform(StrEnum):
     pc = 'mouseKeyboard'
     console = 'controller'
 
-class TrackerGGGameMode(str, Enum):
+class TrackerGGGameMode(StrEnum):
     competitive = 'competitive'
     quick_play = 'quickPlay'
 
 class TrackerGGModel(BaseModel):
-    start_page: int = 1
-    end_page: int = 1
-    platform: TrackerGGPlatform = TrackerGGPlatform.pc.value
-    game_mode: TrackerGGGameMode = TrackerGGGameMode.competitive.value
-
+    # page number must be between 1 and 9999
+    start_page: int = Field(1, ge=1, le=9999)
+    end_page: int = Field(1, ge=1, le=9999)
+    platform: TrackerGGPlatform = Field(TrackerGGPlatform.pc)
+    game_mode: TrackerGGGameMode = Field(TrackerGGGameMode.competitive)
+    write_to_file: bool = Field(False)
