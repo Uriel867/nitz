@@ -3,11 +3,11 @@ include:
   - overfast-api/docker-compose.yml
 
 services:
-  scraping-service:
-    build: infra/scraping-service/
+  scraper:
+    build: infra/scraper/
     entrypoint: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
     volumes:
-      - ./infra/scraping-service/src:/workspace/src
+      - ./infra/scraper/src:/workspace/src
     # don't start if overfast api hasn't started yet
     depends_on:
       app:
