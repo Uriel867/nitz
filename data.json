@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Tracer",
+    "role": "Damage",
+    "health": 150,
+    "abilities": ["Blink", "Recall", "Pulse Bomb"],
+    "difficulty": 2
+  },
+  {
+    "name": "Reinhardt",
+    "role": "Tank",
+    "health": 525,
+    "abilities": ["Barrier Field", "Charge", "Fire Strike", "Earthshatter"],
+    "difficulty": 1
+  },
+  {
+    "name": "Mercy",
+    "role": "Support", 
+    "health": 200,
+    "abilities": ["Caduceus Staff", "Caduceus Blaster", "Guardian Angel", "Resurrect", "Valkyrie"],
+    "difficulty": 1
+  }
+]
