@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Depends
 from typing import Annotated
 
-from .scraper import TrackerGGScraper
+from .service import TrackerGGScraper
 from .models import TrackerGGModel
 
 from di.dependencies import get_scraper
