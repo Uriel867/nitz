@@ -1,7 +1,3 @@
-# deploying the built in api
-include:
-  - overfast-api/docker-compose.yml
-
 services:
   scraper:
     build: infra/scraper/
@@ -9,9 +5,9 @@ services:
     volumes:
       - ./infra/scraper/src:/workspace/src
     # don't start if overfast api hasn't started yet
-    depends_on:
-      app:
-        condition: service_started
+    # depends_on:
+    #   app:
+    #     condition: service_started
     ports:
       - "81:8080"
     # checking service is up every 5 seconds
