@@ -42,15 +42,15 @@ class LeagueOfGraphsScraper:
 
         return data
     
-    async def _scrape_page(self, page: int, region: str=None):
+    async def _scrape_page(self, page: int, region: str) -> str:
         url = f'{self.base_url}/{region}/page-{page}'
         return await self._request(url=url)
     
-    async def _request(self, url):
+    async def _request(self, url: str) -> str:
         with self.scraper.get(url) as response:
             return response.text
         
-    def _parse_text(self, text):
+    def _parse_text(self, text: str) -> List[Dict[str, str]]:
         soup = BeautifulSoup(text, 'html.parser')
         # extracting usernames and battle tags values from the html response
         full_summoners_names = soup.find_all('span', class_=['name'])
@@ -58,8 +58,7 @@ class LeagueOfGraphsScraper:
         data = []
         for i in range(len(full_summoners_names)):
             full_summoner_name = full_summoners_names[i].get_text(strip=True)
-            game_name = full_summoner_name.split('#')[0]
-            tag_line = full_summoner_name.split('#')[1]
+            game_name, tag_line = full_summoner_name.split('#')
             data.append({
                 'full_summoner_name': full_summoner_name,
                 'game_name': game_name,

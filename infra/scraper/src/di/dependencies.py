@@ -1,6 +1,6 @@
 from scraper.service import LeagueOfGraphsScraper
 
-def get_scraper():
+def provide_scraper():
     scraper = LeagueOfGraphsScraper()
 
     yield scraper

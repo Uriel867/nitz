@@ -4,7 +4,7 @@ from typing import Annotated
 from .service import LeagueOfGraphsScraper
 from .models import LeagueOfGraphsModel
 
-from di.dependencies import get_scraper
+from di.dependencies import provide_scraper
 
 
 router = APIRouter(
@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 # defining an annotated type to reuse in multiple endpoints
-Scraper = Annotated[LeagueOfGraphsScraper, Depends(get_scraper)]
+Scraper = Annotated[LeagueOfGraphsScraper, Depends(provide_scraper)]
 
 @router.get('')
 async def scrape_data(model: Annotated[LeagueOfGraphsModel, Query()], scraper: Scraper):
