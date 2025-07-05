@@ -1,3 +1,4 @@
+from typing import List, Dict
 from bs4 import BeautifulSoup
 import cloudscraper
 import asyncio
@@ -5,8 +6,8 @@ import asyncio
 from .exceptions import HttpResponseException
 
 
-class TrackerGGScraper:
-    def __init__(self, base_url='https://tracker.gg/overwatch/leaderboards/stats/all/Eliminations'):
+class LeagueOfGraphsScraper:
+    def __init__(self, base_url='https://www.leagueofgraphs.com/rankings/summoners'):
         super().__init__()
 
         self.base_url = base_url
@@ -20,26 +21,15 @@ class TrackerGGScraper:
         )
         
         
-    async def get_data_from_page(self, start_page: int, end_page: int, platform: str, game_mode: str):
+    async def get_data_from_page(self, start_page: int, end_page: int, region: str) -> List[Dict[str, str]]:
         # container to hold all the retrieved data
         data = []
         futures = []
 
-        # query params
-        params = {
-            'plat': platform,
-            'gamemode': game_mode
-        }
-
         # traversing all pages and retrieving the data
         for page in range(start_page, end_page + 1):
             try:
-                futures.append(
-                    self._scrape_page(
-                        page=page,
-                        query_params=params
-                    )
-                )
+                futures.append(self._scrape_page(page=page, region=region))
             except HttpResponseException as e:
                 break
 
@@ -52,32 +42,28 @@ class TrackerGGScraper:
 
         return data
     
-    async def _scrape_page(
-            self, 
-            page: int, 
-            query_params: dict
-        ):
-        query_params['page'] = page
-        
-        return await self._request(url=self.base_url, params=query_params)
+    async def _scrape_page(self, page: int, region: str=None):
+        url = f'{self.base_url}/{region}/page-{page}'
+        return await self._request(url=url)
     
-    async def _request(self, url, params):
-        with self.scraper.get(url, params=params) as response:
+    async def _request(self, url):
+        with self.scraper.get(url) as response:
             return response.text
         
     def _parse_text(self, text):
-        data = []
-
         soup = BeautifulSoup(text, 'html.parser')
         # extracting usernames and battle tags values from the html response
-        usernames = soup.find_all('span', class_=['trn-ign__username', 'fit-long-username'])
-        tags = soup.find_all('span', class_='trn-ign__discriminator')
-
-        # appending each username#tag to the data container and writing to file - TODO: change to reporting to DB
-        for i in range(len(usernames)):
+        full_summoners_names = soup.find_all('span', class_=['name'])
+        # appending each game_name#tag_line to the data container
+        data = []
+        for i in range(len(full_summoners_names)):
+            full_summoner_name = full_summoners_names[i].get_text(strip=True)
+            game_name = full_summoner_name.split('#')[0]
+            tag_line = full_summoner_name.split('#')[1]
             data.append({
-                'username': usernames[i].get_text(strip=True),
-                'tag': tags[i].get_text(strip=True)
+                'full_summoner_name': full_summoner_name,
+                'game_name': game_name,
+                'tag_line': tag_line
             })
         
         return data

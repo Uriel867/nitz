@@ -1,7 +1,7 @@
-from scraper.service import TrackerGGScraper
+from scraper.service import LeagueOfGraphsScraper
 
 def get_scraper():
-    scraper = TrackerGGScraper()
+    scraper = LeagueOfGraphsScraper()
 
     yield scraper
     # anything that needs to be executed after the function that's being injected with this dependency should go here
