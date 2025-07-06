@@ -59,11 +59,11 @@ class MongoService():
         except Exception as e:
             return {"error": f"An error occurred while fetching match data: {e}", "success": False}
     
-    def get_match_data_by_match_id(self,match_id):
+    def get_match_data_by_id(self, match_id):
         try:
             match_data = match_data_collection.find_one({"match id": match_id}, {"_id": 0})
             if not match_data:
-                return {"message": "match data not found", "success":True}
+                return {"message": "match data not found", "success": True}
             return match_data
         except Exception as e:
             return {"error": f"An error occurred while fetching match data: {e}", "success": False} 

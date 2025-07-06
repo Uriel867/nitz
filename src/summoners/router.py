@@ -1,7 +1,6 @@
-import json
-from fastapi import FastAPI,APIRouter
-from typing import List, Dict
-from mongo.service import MongoService
+from fastapi import APIRouter
+from src.mongo.service import MongoService
+
 
 router = APIRouter(prefix="/summoners")
 ms = MongoService()
@@ -46,24 +45,3 @@ def get_summoner(summoner_name: str,battle_tag: int):
     :return: The summoner data or a message if the summoner is not found
     """
     return ms.get_summoner(summoner_name, battle_tag)
-
-@router.get("/match_id")
-def get_match_id(match_id: str):
-    """
-    Retrieves a match from the MongoDB collection based on match_id.
-    
-    :param match_id: The ID of the match to retrieve
-    :return: The match data or a message if the match is not found
-    """
-    
-    return ms.get_match_id(match_id)
-
-@router.post("/insert_match_id")
-def insert_match_id(match_id: dict):  
-    """
-    Inserts match data into the MongoDB collection.
-    
-    :param match_data: Match data to be inserted (received from API request)
-    """
-    
-    return ms.insert_match_id(match_id)
