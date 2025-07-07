@@ -1,23 +1,34 @@
-from mongo.db import summoners_collection, match_id_collection,match_data_collection
+from pymongo import MongoClient
+from di.dependencies import provide_mongo_client
+from typing import Annotated
+from fastapi import Depends
 
-class MongoService():
-    def insert_summoner(self,summoner_data: dict):
+class MongoService:
+    
+    def __init__(self, mongo_client: MongoClient):
+        self.mongo_client = mongo_client
+        self.db = mongo_client.lol
+        self.summoners_collection = self.db.summoners
+        self.match_id_collection = self.db.match_ids
+        self.match_data_collection = self.db.match_data
+        
+    def insert_summoner(self, summoner_data: dict):
         try:
-            result = summoners_collection.insert_one(summoner_data)
+            result = self.summoners_collection.insert_one(summoner_data)
             return {"message": f"Inserted document with ID: {str(result.inserted_id)}", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}
         
     def insert_many_summoners(self, summoner_data: list):
         try:
-            summoners = summoners_collection.insert_many(summoner_data)
+            summoners = self.summoners_collection.insert_many(summoner_data)
             return {"message": f"Inserted {len(summoners.inserted_ids)} documents", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}
         
     def get_all_summoners(self):
         try:
-            summoners = list(summoners_collection.find({}, {"_id": 0}))  # Exclude the MongoDB ObjectId from the results
+            summoners = list(self.summoners_collection.find({}, {"_id": 0}))  # Exclude the MongoDB ObjectId from the results
             if not summoners:
                 return {"message": "No summoners found", "success": True}   
             return summoners
@@ -26,7 +37,7 @@ class MongoService():
         
     def get_summoner(self, summoner_name: str, battle_tag: int):
         try:
-            summoner = summoners_collection.find_one({"summoner_name": summoner_name, "battle_tag": battle_tag}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
+            summoner = self.summoners_collection.find_one({"summoner_name": summoner_name, "battle_tag": battle_tag}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
             if not summoner:
                 return {"message": "Summoner not found", "success": True}
             return summoner
@@ -35,7 +46,7 @@ class MongoService():
 
     def get_match_id(self, match_id: str):
         try:
-            match = match_id_collection.find_one({"match_id": match_id}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
+            match = self.match_id_collection.find_one({"match_id": match_id}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
             if not match:
                 return {"message": "Match not found", "success": True}
             return match
@@ -44,14 +55,14 @@ class MongoService():
         
     def insert_match_id(self, match_id: dict):
         try:
-            result = match_id_collection.insert_one(match_id)
+            result = self.match_id_collection.insert_one(match_id)
             return {"message": f"Inserted match document with ID: {str(result.inserted_id)}", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting match data: {e}", "success": False}
         
     def get_match_data_by_summoner(self, summoner_puuid: str):
         try:
-            match_data = match_data_collection.find({"summoner_name": summoner_puuid}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
+            match_data = self.match_data_collection.find({"summoner_name": summoner_puuid}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
             matches = list(match_data)
             if not matches:
                 return {"message": "No matches found for this summoner", "success": True}
@@ -61,9 +72,15 @@ class MongoService():
     
     def get_match_data_by_id(self, match_id):
         try:
-            match_data = match_data_collection.find_one({"match id": match_id}, {"_id": 0})
+            match_data = self.match_data_collection.find_one({"match id": match_id}, {"_id": 0})
             if not match_data:
                 return {"message": "match data not found", "success": True}
             return match_data
         except Exception as e:
-            return {"error": f"An error occurred while fetching match data: {e}", "success": False} 
+            return {"error": f"An error occurred while fetching match data: {e}", "success": False}
+
+# Dependency function for MongoService
+def get_mongo_service(
+    mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]
+) -> MongoService:
+    return MongoService(mongo_client)
