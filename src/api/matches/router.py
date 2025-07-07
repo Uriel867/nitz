@@ -19,7 +19,7 @@ def get_match_id(
     
     return mongo_service.get_match_id(match_id)
 
-@router.post("/insert/match_id")
+@router.post("/insert/match_id/{match_id}")
 def insert_match_id(
     match_id: dict,
     mongo_service: Annotated[MongoService, Depends(get_mongo_service)]

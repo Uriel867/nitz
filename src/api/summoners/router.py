@@ -4,7 +4,7 @@ from api.service import MongoService, get_mongo_service
 
 router = APIRouter(prefix="/summoners")
 
-@router.post("/insert")  
+@router.post("/insert/{summoner_data}")  
 def insert_summoner(
     summoner_data: dict,
     mongo_service: Annotated[MongoService, Depends(get_mongo_service)]
@@ -16,7 +16,7 @@ def insert_summoner(
     """
     return mongo_service.insert_summoner(summoner_data)
 
-@router.post("/insert_many")
+@router.post("/insert_many/{summoner_data}")
 def insert_many_summoners(
     summoner_data: List[Dict],
     mongo_service: Annotated[MongoService, Depends(get_mongo_service)]
@@ -39,10 +39,10 @@ def get_all_summoners(
     """
     return mongo_service.get_all_summoners()
 
-@router.get("/get")
+@router.get("/get/{summoner_name}/{puuid}")
 def get_summoner(
     summoner_name: str,
-    battle_tag: int,
+    puuid: int,
     mongo_service: Annotated[MongoService, Depends(get_mongo_service)]
 ):
     """
@@ -52,4 +52,4 @@ def get_summoner(
     :param battle_tag: The battle tag of the summoner to retrieve
     :return: The summoner data or a message if the summoner is not found
     """
-    return mongo_service.get_summoner(summoner_name, battle_tag)
+    return mongo_service.get_summoner(summoner_name, puuid)
