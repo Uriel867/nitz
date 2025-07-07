@@ -21,13 +21,13 @@ def get_match_id(
 
 @router.post("/insert/match_id/{match_id}")
 def insert_match_id(
-    match_id: dict,
+    match_id: str,
     mongo_service: mongo_service_dependency
 ):  
     """
-    Inserts match data into the MongoDB collection.
+    Inserts match id into the MongoDB collection.
     
-    :param match_id: Match data to be inserted (received from API request)
+    :param match_id: Match id to be inserted (received from API request)
     """
     
     return mongo_service.insert_match_id(match_id)
