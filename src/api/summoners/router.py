@@ -3,11 +3,12 @@ from fastapi import APIRouter, Depends
 from api.service import MongoService, get_mongo_service
 
 router = APIRouter(prefix="/summoners")
+mongo_service_dependency = Annotated[MongoService,Depends(get_mongo_service)]
 
 @router.post("/insert/{summoner_data}")  
 def insert_summoner(
     summoner_data: dict,
-    mongo_service: Annotated[MongoService, Depends(get_mongo_service)]
+    mongo_service: mongo_service_dependency
 ):
     """
     Inserts summoner data directly into the MongoDB collection.
@@ -19,7 +20,7 @@ def insert_summoner(
 @router.post("/insert_many/{summoner_data}")
 def insert_many_summoners(
     summoner_data: List[Dict],
-    mongo_service: Annotated[MongoService, Depends(get_mongo_service)]
+    mongo_service: mongo_service_dependency
 ):
     """
     Inserts multiple summoner data into the MongoDB collection.
@@ -30,7 +31,7 @@ def insert_many_summoners(
 
 @router.get("/all")
 def get_all_summoners(
-    mongo_service: Annotated[MongoService, Depends(get_mongo_service)]
+    mongo_service: mongo_service_dependency
 ):
     """
     Retrieves all summoners from the MongoDB collection.
@@ -43,7 +44,7 @@ def get_all_summoners(
 def get_summoner(
     summoner_name: str,
     puuid: int,
-    mongo_service: Annotated[MongoService, Depends(get_mongo_service)]
+    mongo_service: mongo_service_dependency
 ):
     """
     Retrieves a summoner from the MongoDB collection based on summoner_name and battle_tag.
