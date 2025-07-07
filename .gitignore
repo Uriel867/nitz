@@ -10,3 +10,12 @@ data\db\
 *.lock
 *.bson
 mongod.lock
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+__pycache__/
