@@ -1,0 +1,23 @@
+services:
+  scraper:
+    build: infra/scraper/
+    entrypoint: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+    volumes:
+      - ./infra/scraper/src:/workspace/src
+    # don't start if overfast api hasn't started yet
+    # depends_on:
+    #   app:
+    #     condition: service_started
+    ports:
+      - "81:8080"
+    # checking service is up every 5 seconds
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://0.0.0.0:8080/health || exit 1"]
+      interval: 60s
+      timeout: 5s
+    # scrape every week
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl http://0.0.0.0:8080/scrape || exit 1"]
+    #   interval: 10080s # 1 week
+    #   timeout: 60s
+    

@@ -1,0 +1,10 @@
+beautifulsoup4==4.13.3
+fastapi[standard]==0.115.13
+requests
+lxml[html_clean]
+requests-html
+pyppeteer
+selenium
+cloudscraper
+playwright
+aiohttp
