@@ -5,9 +5,10 @@ from api.service import MongoService, get_mongo_service
 router = APIRouter(prefix="/summoners")
 mongo_service_dependency = Annotated[MongoService,Depends(get_mongo_service)]
 
-@router.post("/insert/{summoner_data}")  
+@router.post("/insert/{summoner_name}/{puuid}")  
 def insert_summoner(
-    summoner_data: dict,
+    summoner_name: str,
+    puuid: str,
     mongo_service: mongo_service_dependency
 ):
     """
@@ -15,9 +16,9 @@ def insert_summoner(
     
     :param summoner_data: Summoner data to be inserted (received from API request)
     """
-    return mongo_service.insert_summoner(summoner_data)
+    return mongo_service.insert_summoner(summoner_name,puuid)
 
-@router.post("/insert_many/{summoner_data}")
+@router.post("/insert_many")
 def insert_many_summoners(
     summoner_data: List[Dict],
     mongo_service: mongo_service_dependency

@@ -12,9 +12,9 @@ class MongoService:
         self.match_id_collection = self.db.match_ids
         self.match_data_collection = self.db.match_data
         
-    def insert_summoner(self, summoner_data: dict):
+    def insert_summoner(self, summoner_name: str,puuid: str):
         try:
-            result = self.summoners_collection.insert_one(summoner_data)
+            result = self.summoners_collection.insert_one({summoner_name: puuid})
             return {"message": f"Inserted document with ID: {str(result.inserted_id)}", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}
@@ -53,9 +53,9 @@ class MongoService:
         except Exception as e:
             return {"error": f"An error occurred while fetching match IDs: {e}", "success": False}
         
-    def insert_match_id(self, match_id: dict):
+    def insert_match_id(self, match_id: str):
         try:
-            result = self.match_id_collection.insert_one(match_id)
+            result = self.match_id_collection.insert_one({"match_id": match_id})
             return {"message": f"Inserted match document with ID: {str(result.inserted_id)}", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting match data: {e}", "success": False}
