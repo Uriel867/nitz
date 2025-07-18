@@ -1,9 +1,9 @@
 services:
-  scraper:
-    build: infra/scraper/
+  api:
+    build: api/
     entrypoint: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
     volumes:
-      - ./infra/scraper/src:/workspace/src
+      - ./api/src:/workspace/src
     # don't start if overfast api hasn't started yet
     depends_on:
       postgres:
@@ -16,7 +16,7 @@ services:
       interval: 60s
       timeout: 5s
     env_file:
-      - ./infra/scraper/.env
+      - ./api/.env
     # scrape every week
     # healthcheck:
     #   test: ["CMD-SHELL", "curl http://0.0.0.0:8080/scrape || exit 1"]
