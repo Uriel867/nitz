@@ -1,11 +1,11 @@
 from typing import Annotated, List, Dict
 from fastapi import APIRouter, Depends
-from api.service import MongoService, get_mongo_service
+from api.service import LoLStatsService, get_mongo_service
 
 router = APIRouter(prefix="/summoners")
-mongo_service_dependency = Annotated[MongoService,Depends(get_mongo_service)]
+mongo_service_dependency = Annotated[LoLStatsService,Depends(get_mongo_service)]
 
-@router.post("/insert/{summoner_name}/{puuid}")  
+@router.post("/summoner")  
 def insert_summoner(
     summoner_name: str,
     puuid: str,
@@ -18,7 +18,7 @@ def insert_summoner(
     """
     return mongo_service.insert_summoner(summoner_name,puuid)
 
-@router.post("/insert_many")
+@router.post("/multiple")
 def insert_many_summoners(
     summoner_data: List[Dict],
     mongo_service: mongo_service_dependency
@@ -41,7 +41,7 @@ def get_all_summoners(
     """
     return mongo_service.get_all_summoners()
 
-@router.get("/get/{summoner_name}/{puuid}")
+@router.get("/summoner/{summoner_name}/{puuid}")
 def get_summoner(
     summoner_name: str,
     puuid: int,

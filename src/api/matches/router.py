@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from typing import Annotated
-from api.service import MongoService, get_mongo_service
+from api.service import LoLStatsService, get_mongo_service
 
-router = APIRouter(prefix="/match")
-mongo_service_dependency = Annotated[MongoService,Depends(get_mongo_service)]
+router = APIRouter(prefix="/matches")
+mongo_service_dependency = Annotated[LoLStatsService,Depends(get_mongo_service)]
 
-@router.get("/match_id/{match_id}")
+@router.get("/match/{match_id}")
 def get_match_id(
     match_id: str,
     mongo_service: mongo_service_dependency
@@ -19,7 +19,7 @@ def get_match_id(
     
     return mongo_service.get_match_id(match_id)
 
-@router.post("/insert/match_id/{match_id}")
+@router.post("/match")
 def insert_match_id(
     match_id: str,
     mongo_service: mongo_service_dependency
@@ -32,14 +32,14 @@ def insert_match_id(
     
     return mongo_service.insert_match_id(match_id)
 
-@router.get("/match_data_by_summoner/{summoner_puuid}")
+@router.get("/by-summoner/{summoner_puuid}")
 def get_match_data_by_summoner(
     summoner_puuid: str,
     mongo_service: mongo_service_dependency
 ):
     return mongo_service.get_match_data_by_summoner(summoner_puuid)
 
-@router.get("/data_by_id/{match_id}")
+@router.get("/by-id/{match_id}")
 def get_match_data_by_id(
     match_id: str,
     mongo_service: mongo_service_dependency

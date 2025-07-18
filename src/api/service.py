@@ -3,7 +3,7 @@ from di.dependencies import provide_mongo_client
 from typing import Annotated
 from fastapi import Depends
 
-class MongoService:
+class LoLStatsService:
     
     def __init__(self, mongo_client: MongoClient):
         self.mongo_client = mongo_client
@@ -82,5 +82,5 @@ class MongoService:
 # Dependency function for MongoService
 def get_mongo_service(
     mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]
-) -> MongoService:
-    return MongoService(mongo_client)
+) -> LoLStatsService:
+    return LoLStatsService(mongo_client)
