@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
-from typing import Annotated
-from reporter.service import LoLStatsService, get_lol_stats_service
+from typing import Annotated,List,Dict
+from reporter.service import LoLStatsService
+from di.dependencies import get_lol_stats_service
 
 router = APIRouter(prefix="/reporter")
 LoLStatsServiceDependency = Annotated[LoLStatsService,Depends(get_lol_stats_service)]

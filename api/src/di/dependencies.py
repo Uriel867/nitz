@@ -6,7 +6,7 @@ from pymongo import MongoClient
 
 
 def provide_mongo_client():
-    mongo_client = MongoClient()
+    mongo_client = MongoClient(host="mongodb")
     
     yield mongo_client
     
