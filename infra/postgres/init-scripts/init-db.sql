@@ -1,3 +1,7 @@
+-- TODO: Uriel to create relevant tables
+-- TODO: create triggers and procedures
+
+
 CREATE TABLE IF NOT EXISTS match_info (
     matchId SERIAL PRIMARY KEY,
     playerScore0 INT,
