@@ -11,7 +11,7 @@ services:
     ports:
       - 81:8080
     networks:
-      - my_network
+      - lol_api_network
 
     # checking service is up every 5 seconds
    
@@ -31,7 +31,7 @@ services:
     # volumes:
       # - ./data/db:/data/db
     networks:
-      - my_network
+      - lol_api_network
 
 networks:
   my_network:

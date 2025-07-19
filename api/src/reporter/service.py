@@ -41,14 +41,7 @@ class LoLStatsService:
         except Exception as e:
             return {"error": f"An error occurred while fetching the summoner: {e}", "success": False}
 
-    def get_match_id(self, match_id: str):
-        try:
-            match = self.match_id_collection.find_one({"match_id": match_id}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
-            if not match:
-                return {"message": "Match not found", "success": True}
-            return match
-        except Exception as e:
-            return {"error": f"An error occurred while fetching match IDs: {e}", "success": False}
+   
         
     def insert_match_id(self, match_id: str):
         try:

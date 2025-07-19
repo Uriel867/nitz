@@ -6,19 +6,6 @@ from di.dependencies import get_lol_stats_service
 router = APIRouter(prefix="/reporter")
 LoLStatsServiceDependency = Annotated[LoLStatsService,Depends(get_lol_stats_service)]
 
-@router.get("/match/{match_id}")
-def get_match_id(
-    match_id: str,
-    service: LoLStatsServiceDependency
-):
-    """
-    Retrieves a match from the MongoDB collection based on match_id.
-    
-    :param match_id: The ID of the match to retrieve
-    :return: The match data or a message if the match is not found
-    """
-    
-    return service.get_match_id(match_id)
 
 @router.post("/match")
 def insert_match_id(
