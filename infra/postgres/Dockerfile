@@ -8,7 +8,7 @@ USER postgres
 # getting the init scripts
 COPY init-scripts/* /docker-entrypoint-initdb.d/
 
-# running the builtin entrypoint script when container starts
-ENTRYPOINT ["docker-entrypoint.sh"]
-# running the database after entrypoint finishes
-CMD ["postgres"]
+# # running the builtin entrypoint script when container starts
+# ENTRYPOINT ["docker-entrypoint.sh"]
+# # running the database after entrypoint finishes
+# CMD ["postgres"]
