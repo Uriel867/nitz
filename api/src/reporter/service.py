@@ -1,7 +1,4 @@
 from pymongo import MongoClient
-from di.dependencies import provide_mongo_client
-from typing import Annotated
-from fastapi import Depends
 
 class LoLStatsService:
     
@@ -79,8 +76,3 @@ class LoLStatsService:
         except Exception as e:
             return {"error": f"An error occurred while fetching match data: {e}", "success": False}
 
-# Dependency function for MongoService
-def get_mongo_service(
-    mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]
-) -> LoLStatsService:
-    return LoLStatsService(mongo_client)
