@@ -16,6 +16,7 @@ services:
       interval: 60s
       timeout: 5s
     env_file:
+      - .env.global
       - ./api/.env
     # scrape every week
     # healthcheck:
@@ -28,4 +29,5 @@ services:
     ports:
       - 5555:5432
     env_file:
+      - .env.global
       - ./infra/postgres/.env
