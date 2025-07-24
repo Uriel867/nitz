@@ -51,6 +51,18 @@ services:
     networks:
       - lol_api_network
 
+  dataloader:
+    build: infra/dataloader
+    entrypoint: sh loader.sh
+    healthcheck:
+      test: ["CMD-SHELL", "sh /workspace/loader.sh || exit 1"]
+      interval: 8640s
+      timeout: 30s
+
+    environment:
+      EXTRACT_URL: http://api:8080/scrape
+      LOAD_URL: http://api:8080/scrape/data
+
 networks:
   lol_api_network:
     driver: bridge

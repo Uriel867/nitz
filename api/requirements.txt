@@ -7,3 +7,5 @@ pyppeteer
 cloudscraper
 aiohttp
 pymongo
+sqlalchemy
+psycopg2-binary
