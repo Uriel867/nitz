@@ -12,19 +12,16 @@ services:
         condition: service_started
     ports:
       - 81:8080
+    env_file:
+      - .env.global
+      - ./api/.env
     networks:
       - lol_api_network
-   
-    env_file:
-      - ./api/.env
     # checking service is up every 5 seconds
     healthcheck:
       test: ["CMD-SHELL", "curl http://0.0.0.0:8080/health || exit 1"]
       interval: 60s
       timeout: 5s
-    env_file:
-      - .env.global
-      - ./api/.env
     # scrape every week
     # healthcheck:
     #   test: ["CMD-SHELL", "curl http://0.0.0.0:8080/scrape || exit 1"]
@@ -33,11 +30,12 @@ services:
     
   mongodb:
     build: infra/mongodb
-    container_name: mongodb
     ports:
       - "27017:27017"
     # volumes:
       # - ./data/db:/data/db
+    env_file:
+      - .env.global
     networks:
       - lol_api_network
 
@@ -58,10 +56,11 @@ services:
       test: ["CMD-SHELL", "sh /workspace/loader.sh || exit 1"]
       interval: 8640s
       timeout: 30s
-
     environment:
       EXTRACT_URL: http://api:8080/scrape
       LOAD_URL: http://api:8080/scrape/data
+    networks:
+      - lol_api_network
 
 networks:
   lol_api_network:
