@@ -37,7 +37,7 @@ CREATE TABLE match_info (
 -- Participant table (simplified; add more fields as needed)
 CREATE TABLE participant (
     participant_id SERIAL PRIMARY KEY,
-    match_id TEXT REFERENCES metadata(match_id),
+    match_id TEXT REFERENCES match_metadata(match_id),
     all_in_pings INTEGER,
     assist_me_pings INTEGER,
     assists INTEGER,
@@ -57,7 +57,7 @@ CREATE TABLE participant (
 -- Team table
 CREATE TABLE match_team (
     team_id INTEGER,
-    match_id TEXT REFERENCES metadata(match_id),
+    match_id TEXT REFERENCES match_metadata(match_id),
     win BOOLEAN,
     PRIMARY KEY (match_id, team_id)
 );
@@ -65,7 +65,7 @@ CREATE TABLE match_team (
 -- Ban table
 CREATE TABLE match_ban (
     team_id INTEGER,
-    match_id TEXT REFERENCES metadata(match_id),
+    match_id TEXT REFERENCES match_metadata(match_id),
     champion_id INTEGER,
     pick_turn INTEGER,
     PRIMARY KEY (match_id, team_id, pick_turn)
@@ -73,7 +73,7 @@ CREATE TABLE match_ban (
 
 -- Objectives table
 CREATE TABLE match_objectives (
-    match_id TEXT REFERENCES metadata(match_id),
+    match_id TEXT REFERENCES match_metadata(match_id),
     team_id INTEGER,
     objective_type TEXT,
     first BOOLEAN,
