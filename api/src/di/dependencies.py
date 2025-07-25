@@ -8,17 +8,6 @@ from reporter.service import LoLStatsService
 from scraper.service import LeagueOfGraphsScraperService
 
 
-def provide_mongo_client():
-    mongo_client = MongoClient(host="mongodb")
-    
-    yield mongo_client
-    
-# Dependency function for LoLStatsService
-def get_lol_stats_service(
-    mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]
-) -> LoLStatsService:
-    return LoLStatsService(mongo_client)
-
 engine = None
 scraper_service = None
 
@@ -37,3 +26,14 @@ def provide_postgres_engine():
         engine = create_engine(os.environ['POSTGRES_DB_URL'], echo=True)
     
     yield engine
+
+def provide_mongo_client():
+    mongo_client = MongoClient(host="mongodb")
+    
+    yield mongo_client
+    
+# Dependency function for LoLStatsService
+def provide_lol_stats_service(
+    mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]
+) -> LoLStatsService:
+    return LoLStatsService(mongo_client)

@@ -17,7 +17,7 @@ CREATE TABLE match_metadata (
 
 -- Info table
 CREATE TABLE match_info (
-    match_id TEXT PRIMARY KEY REFERENCES metadata(match_id),
+    match_id TEXT PRIMARY KEY REFERENCES match_metadata(match_id),
     end_of_game_result TEXT,
     game_creation BIGINT,
     game_duration BIGINT,
@@ -49,9 +49,7 @@ CREATE TABLE participant (
     champion_name TEXT,
     command_pings INTEGER,
     champion_transform INTEGER,
-    consumables_purchased INTEGER,
-    
-
+    consumables_purchased INTEGER
 );
 
 -- Team table
