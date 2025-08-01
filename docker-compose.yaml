@@ -1,3 +1,11 @@
+include:
+  - path: infra/airflow/docker-compose.yaml
+    ports:
+      - 8080:8080
+    env_file:
+      - .env.global
+      - infra/airflow/.env
+      
 services:
   api:
     build: api/
@@ -48,6 +56,11 @@ services:
       - ./infra/postgres/.env
     networks:
       - lol_api_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: 
 
 networks:
   lol_api_network:
