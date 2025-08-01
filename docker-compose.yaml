@@ -46,6 +46,8 @@ services:
       - .env.global
     networks:
       - lol_api_network
+    volumes: 
+      - mongodb_data:/data/db
 
   postgres:
     build: infra/postgres
@@ -61,6 +63,17 @@ services:
 
 volumes:
   postgres_data: 
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: infra/data/postgres
+  mongodb_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: infra/data/mongodb
 
 networks:
   lol_api_network:
