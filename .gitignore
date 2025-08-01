@@ -21,3 +21,7 @@ ENV/
 
 **/__pycache__
 .idea
+
+infra/data
+infra/airflow/src/logs
+infra/airflow/src/plugins
