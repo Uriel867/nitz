@@ -32,7 +32,7 @@ def provide_postgres_engine():
     yield _postgres_engine
 
 def provide_mongo_client():
-    mongo_client = MongoClient(host="mongodb")
+    mongo_client = MongoClient(host=os.environ['MONGODB_URL'], port=int(os.environ['MONGODB_PORT']))
     
     yield mongo_client
     

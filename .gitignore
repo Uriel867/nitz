@@ -19,7 +19,6 @@ ENV/
 .venv/
 .env/
 
-**/__pycache__
 .idea
 
 infra/data
