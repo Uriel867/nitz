@@ -1,14 +1,21 @@
 -- TODO: Uriel to create relevant tables
 -- TODO: create triggers and procedures
 
+CREATE SCHEMA IF NOT EXISTS api;
+CREATE SCHEMA IF NOT EXISTS airflow;
 
-CREATE TABLE IF NOT EXISTS summoner_info (
+CREATE TABLE IF NOT EXISTS api.summoner_info (
     puuid TEXT PRIMARY KEY,
     summoner_name TEXT,
     battle_tag TEXT
 );
 
-CREATE TABLE IF NOT EXISTS challenge (
+CREATE TABLE IF NOT EXISTS api.match_id (
+    matchId TEXT PRIMARY KEY,
+    puuid TEXT REFERENCES summoner_info(puuid)
+);
+
+CREATE TABLE IF NOT EXISTS api.challenge (
     challengeId SERIAL PRIMARY KEY,
     twelveAssistStreakCount INTEGER,
     HealFromMapSources DOUBLE PRECISION,
@@ -133,7 +140,7 @@ CREATE TABLE IF NOT EXISTS challenge (
     wardsGuarded INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS participant (
+CREATE TABLE IF NOT EXISTS api.participant (
     PlayerScore0 INTEGER,
     PlayerScore1 INTEGER,
     PlayerScore2 INTEGER,
@@ -263,7 +270,7 @@ CREATE TABLE IF NOT EXISTS participant (
     win BOOLEAN
 );
 
-CREATE TABLE IF NOT EXISTS match_info (
+CREATE TABLE IF NOT EXISTS api.match_info (
     matchId TEXT PRIMARY KEY,
     endOfGameResult TEXT,
     gameCreation BIGINT,
