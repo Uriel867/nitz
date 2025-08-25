@@ -25,7 +25,6 @@ services:
     
   mongodb:
     build: infra/mongodb
-    container_name: mongodb
     ports:
       - "27017:27017"
     # volumes:
@@ -34,5 +33,5 @@ services:
       - lol_api_network
 
 networks:
-  my_network:
+  lol_api_network:
     driver: bridge
