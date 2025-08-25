@@ -2,31 +2,20 @@ from pydantic import BaseModel,model_validator
 
 class SummonerModel(BaseModel):
     summoner_name: str
-    battle_tag: str
-    puuid: str
+    tag_line: str
     
     @model_validator(mode='after')
     def validate_summoner_name(self):
         if self.summoner_name is None:
             raise ValueError("Summoner name cannot be empty")
+        return self
         
     @model_validator(mode='after')
-    def validate_battle_tag(self):
-        if self.battle_tag is None:
-            raise ValueError("Battle tag cannot be empty")
+    def validate_tag_line(self):
+        if self.tag_line is None:
+            raise ValueError("tag_line cannot be empty")
         
-        if not self.battle_tag.startswith('#'):
-            raise ValueError("Battle tags must start with #")
-        
-    @model_validator(mode='after')
-    def validate_puuid(self):
-        if self.puuid is None:
-            raise ValueError("Puuid cannot be empty")
-    
-class MatchModel(BaseModel):
-    match_id: str
-    
-    @model_validator(mode='after')
-    def validate_match_id(self):
-        if self.match_id is None:
-            raise ValueError("Match id cannot be empty")
+        if not self.tag_line.startswith('#'):
+            raise ValueError("tag_line must start with #")
+
+        return self

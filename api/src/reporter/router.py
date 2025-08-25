@@ -2,31 +2,11 @@ from fastapi import APIRouter, Depends
 from typing import Annotated,List,Dict
 from reporter.service import LoLStatsService
 from di.dependencies import get_lol_stats_service
-from models import SummonerModel,MatchModel
+from .models import SummonerModel
 
 router = APIRouter(prefix="/reporter")
 LoLStatsServiceDependency = Annotated[LoLStatsService,Depends(get_lol_stats_service)]
 
-
-@router.post("/match")
-def insert_match_id(
-    model: MatchModel,
-    service: LoLStatsServiceDependency
-):  
-    """
-    Inserts match id into the MongoDB collection.
-    
-    :param match_id: Match id to be inserted (received from API request)
-    """
-    
-    return service.insert_match_id(match_id=model.match_id)
-
-@router.get("/by-summoner/{summoner_puuid}")
-def get_match_data_by_summoner(
-    summoner_puuid: str,
-    service: LoLStatsServiceDependency
-):
-    return service.get_match_data_by_summoner(summoner_puuid=summoner_puuid)
 
 @router.get("/by-id/{match_id}")
 def get_match_data_by_id(
@@ -34,6 +14,16 @@ def get_match_data_by_id(
     service: LoLStatsServiceDependency
 ):
     return service.get_match_data_by_id(match_id=match_id)
+
+@router.post("/match")
+def insert_match_data_by_id(
+    match_id: str,
+    match_data: Dict,
+    service: LoLStatsServiceDependency
+):
+    
+    return service.insert_match_data_by_id(match_id=match_id, match_data=match_data)
+
 
 @router.post("/summoner")  
 def insert_summoner(
@@ -45,7 +35,7 @@ def insert_summoner(
     
     :param summoner_data: Summoner data to be inserted (received from API request)
     """
-    return service.insert_summoner(summoner_name=model.summoner_name,battle_tag=model.battle_tag,puuid=model.puuid)
+    return service.insert_summoner(summoner_name=model.summoner_name, tag_line=model.tag_line)
 
 @router.post("/multiple")
 def insert_many_summoners(
@@ -69,17 +59,3 @@ def get_all_summoners(
     :return: List of all summoners or a message if no summoners are found
     """
     return service.get_all_summoners()
-
-@router.get("/summoner/{puuid}")
-def get_summoner(
-    puuid: str,
-    service: LoLStatsServiceDependency
-):
-    """
-    Retrieves a summoner from the MongoDB collection based on summoner_name and battle_tag.
-    
-    :param summoner_name: The name of the summoner to retrieve
-    :param battle_tag: The battle tag of the summoner to retrieve
-    :return: The summoner data or a message if the summoner is not found
-    """
-    return service.get_summoner(puuid=puuid)
