@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from typing import Annotated,List,Dict
 from reporter.service import LoLStatsService
 from di.dependencies import get_lol_stats_service
+from models import SummonerModel,MatchModel
 
 router = APIRouter(prefix="/reporter")
 LoLStatsServiceDependency = Annotated[LoLStatsService,Depends(get_lol_stats_service)]
@@ -9,7 +10,7 @@ LoLStatsServiceDependency = Annotated[LoLStatsService,Depends(get_lol_stats_serv
 
 @router.post("/match")
 def insert_match_id(
-    match_id: str,
+    model: MatchModel,
     service: LoLStatsServiceDependency
 ):  
     """
@@ -18,26 +19,25 @@ def insert_match_id(
     :param match_id: Match id to be inserted (received from API request)
     """
     
-    return service.insert_match_id(match_id)
+    return service.insert_match_id(match_id=model.match_id)
 
 @router.get("/by-summoner/{summoner_puuid}")
 def get_match_data_by_summoner(
     summoner_puuid: str,
     service: LoLStatsServiceDependency
 ):
-    return service.get_match_data_by_summoner(summoner_puuid)
+    return service.get_match_data_by_summoner(summoner_puuid=summoner_puuid)
 
 @router.get("/by-id/{match_id}")
 def get_match_data_by_id(
     match_id: str,
     service: LoLStatsServiceDependency
 ):
-    return service.get_match_data_by_id(match_id)
+    return service.get_match_data_by_id(match_id=match_id)
 
 @router.post("/summoner")  
 def insert_summoner(
-    summoner_name: str,
-    puuid: str,
+    model: SummonerModel,
     service: LoLStatsServiceDependency
 ):
     """
@@ -45,11 +45,11 @@ def insert_summoner(
     
     :param summoner_data: Summoner data to be inserted (received from API request)
     """
-    return service.insert_summoner(summoner_name,puuid)
+    return service.insert_summoner(summoner_name=model.summoner_name,battle_tag=model.battle_tag,puuid=model.puuid)
 
 @router.post("/multiple")
 def insert_many_summoners(
-    summoner_data: List[Dict],
+    summoner_list: List[Dict],
     service: LoLStatsServiceDependency
 ):
     """
@@ -57,7 +57,7 @@ def insert_many_summoners(
     
     :param summoner_data: List of summoner data to be inserted (received from API request)
     """
-    return service.insert_many_summoners(summoner_data)
+    return service.insert_many_summoners(summoners_list=summoner_list)
 
 @router.get("/all")
 def get_all_summoners(
@@ -70,10 +70,9 @@ def get_all_summoners(
     """
     return service.get_all_summoners()
 
-@router.get("/summoner/{summoner_name}/{puuid}")
+@router.get("/summoner/{puuid}")
 def get_summoner(
-    summoner_name: str,
-    puuid: int,
+    puuid: str,
     service: LoLStatsServiceDependency
 ):
     """
@@ -83,4 +82,4 @@ def get_summoner(
     :param battle_tag: The battle tag of the summoner to retrieve
     :return: The summoner data or a message if the summoner is not found
     """
-    return service.get_summoner(summoner_name, puuid)
+    return service.get_summoner(puuid=puuid)

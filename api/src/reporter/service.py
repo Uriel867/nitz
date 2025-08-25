@@ -9,16 +9,18 @@ class LoLStatsService:
         self.match_id_collection = self.db.match_ids
         self.match_data_collection = self.db.match_data
         
-    def insert_summoner(self, summoner_name: str,puuid: str):
+    #summoners
+    
+    def insert_summoner(self, summoner_name: str,battle_tag: str,puuid: str):
         try:
-            result = self.summoners_collection.insert_one({summoner_name: puuid})
+            result = self.summoners_collection.insert_one({"puuid": puuid, "summoner_name": summoner_name,"battle_tag": battle_tag})
             return {"message": f"Inserted document with ID: {str(result.inserted_id)}", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}
         
-    def insert_many_summoners(self, summoner_data: list):
+    def insert_many_summoners(self, summoners_list: list):
         try:
-            summoners = self.summoners_collection.insert_many(summoner_data)
+            summoners = self.summoners_collection.insert_many(summoners_list)
             return {"message": f"Inserted {len(summoners.inserted_ids)} documents", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}
@@ -32,16 +34,16 @@ class LoLStatsService:
         except Exception as e:
             return {"error": f"An error occurred while fetching summoners: {e}", "success": False}
         
-    def get_summoner(self, summoner_name: str, battle_tag: int):
+    def get_summoner(self,puuid: str):
         try:
-            summoner = self.summoners_collection.find_one({"summoner_name": summoner_name, "battle_tag": battle_tag}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
+            summoner = self.summoners_collection.find_one({"puuid":puuid}, {"_id": 0})  # Exclude the MongoDB ObjectId from the results
             if not summoner:
                 return {"message": "Summoner not found", "success": True}
             return summoner
         except Exception as e:
             return {"error": f"An error occurred while fetching the summoner: {e}", "success": False}
 
-   
+   #matches
         
     def insert_match_id(self, match_id: str):
         try:
