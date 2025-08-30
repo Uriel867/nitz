@@ -5,7 +5,10 @@ from pymongo import MongoClient
 from traffic_managment.riot_limiter import RiotLimiter
 import asyncio
 
-account_puuid_limiter = RiotLimiter(capacity=1000,leak_rate=1000/60)
+#Buckets
+account_by_id_limiter = RiotLimiter(capacity=1000,leak_rate=1000/60)
+account_by_puuid_limiter = RiotLimiter(capacity=1000,leak_rate=1000/60)
+match_by_id_limiter = RiotLimiter(2000,2000/10)
 
 def provide_mongo_client():
     mongo_client = MongoClient(host="mongodb")
@@ -18,8 +21,15 @@ def get_lol_stats_service(
 ) -> LoLStatsService:
     return LoLStatsService(mongo_client)
 
+
+#Dependency for RiotGames
 async def acquire_account_puuid_limiter(request: Request):
-    print(f'Bucket level is: {account_puuid_limiter.bucket.level}')
-    await account_puuid_limiter.acquire()
+    await account_by_id_limiter.acquire()
+    
+async def acquire_account_by_id_limiter(request: Request):
+    await account_by_puuid_limiter.acquire()
+    
+async def acquire_match_by_match_id_limiter(request: Request):
+    await match_by_id_limiter.acquire()
     
 
