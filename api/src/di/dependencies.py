@@ -13,7 +13,11 @@ match_by_id_limiter = RiotLimiter(2000,2000/10)
 def provide_mongo_client():
     mongo_client = MongoClient(host="mongodb")
     
-    yield mongo_client
+    try:
+        yield mongo_client
+    
+    finally:
+        mongo_client.close()
     
 # Dependency function for LoLStatsService
 def get_lol_stats_service(
@@ -24,12 +28,12 @@ def get_lol_stats_service(
 
 #Dependency for RiotGames
 async def acquire_account_puuid_limiter(request: Request):
-    await account_by_id_limiter.acquire()
+    await account_by_puuid_limiter.acquire()
     
 async def acquire_account_by_id_limiter(request: Request):
-    await account_by_puuid_limiter.acquire()
+    await account_by_id_limiter.acquire()
     
 async def acquire_match_by_match_id_limiter(request: Request):
     await match_by_id_limiter.acquire()
-    
+
 

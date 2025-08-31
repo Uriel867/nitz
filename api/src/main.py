@@ -1,6 +1,6 @@
 from fastapi import  FastAPI
 from reporter.router import router as reporter_router
-from riot_games_api.riot_routes import router as riot_games_router
+from riot_games_api.router import router as riot_games_router
 
 app = FastAPI()
 
