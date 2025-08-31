@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 from reporter.service import LoLStatsService
 from pymongo import MongoClient
-from api.src.traffic_managment.async_leaky_bucket import AsyncLeakyBucket
+from traffic_managment.async_leaky_bucket import AsyncLeakyBucket
 from riot_games.service import RiotGamesService
 import asyncio
 import os
