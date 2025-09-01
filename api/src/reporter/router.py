@@ -5,13 +5,13 @@ from di.dependencies import provide_lol_stats_service
 from .models import SummonerModel
 
 router = APIRouter(prefix="/reporter")
-lol_stats_service_dependency = Annotated[LoLStatsService,Depends(provide_lol_stats_service)]
+LoLStatsServiceDependency = Annotated[LoLStatsService,Depends(provide_lol_stats_service)]
 
 
 @router.get("/by-id/{match_id}")
 def get_match_data_by_id(
     match_id: str,
-    service: lol_stats_service_dependency
+    service: LoLStatsServiceDependency
 ):
     return service.get_match_data_by_id(match_id=match_id)
 
@@ -19,7 +19,7 @@ def get_match_data_by_id(
 def insert_match_data_by_id(
     match_id: str,
     match_data: Dict,
-    service: lol_stats_service_dependency
+    service: LoLStatsServiceDependency
 ):
     
     return service.insert_match_data_by_id(match_id=match_id, match_data=match_data)
@@ -28,7 +28,7 @@ def insert_match_data_by_id(
 @router.post("/summoner")  
 def insert_summoner(
     model: SummonerModel,
-    service: lol_stats_service_dependency
+    service: LoLStatsServiceDependency
 ):
     """
     Inserts summoner data directly into the MongoDB collection.
@@ -40,7 +40,7 @@ def insert_summoner(
 @router.post("/multiple")
 def insert_many_summoners(
     summoner_list: List[Dict],
-    service: lol_stats_service_dependency
+    service: LoLStatsServiceDependency
 ):
     """
     Inserts multiple summoner data into the MongoDB collection.
@@ -51,7 +51,7 @@ def insert_many_summoners(
 
 @router.get("/all")
 def get_all_summoners(
-    service: lol_stats_service_dependency
+    service: LoLStatsServiceDependency
 ):
     """
     Retrieves all summoners from the MongoDB collection.

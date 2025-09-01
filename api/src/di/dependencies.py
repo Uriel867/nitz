@@ -12,6 +12,8 @@ account_by_id_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 2000
 account_by_puuid_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 1000 requests every 1 minute
 match_by_id_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
 
+riot_games_service = RiotGamesService(os.getenv("RIOT_API_KEY"))
+
 #Dependencies for LolStatsService
 def provide_mongo_client():
     mongo_host = os.getenv("MONGO_HOST")
@@ -29,8 +31,6 @@ def provide_lol_stats_service(
 
 #Dependencies for RiotGameService
 def provide_riot_games_service():
-    riot_games_service = RiotGamesService(os.getenv("RIOT_API_KEY"))
-    
     yield riot_games_service
 
 
