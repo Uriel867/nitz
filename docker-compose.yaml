@@ -15,8 +15,8 @@ services:
 
     # checking service is up every 5 seconds
    
-    #env_file:
-      #- ./api/.env
+    env_file:
+      - ./api/.env
     # scrape every week
     # healthcheck:
     #   test: ["CMD-SHELL", "curl http://0.0.0.0:8080/scrape || exit 1"]

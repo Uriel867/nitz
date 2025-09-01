@@ -5,7 +5,7 @@ COPY requirements.txt /tmp/requirements.txt
 
 USER root
 
-RUN python3 -m pip install -r /tmp/requirements.txt --break-system-packages && rm /tmp/requirements.txt
+RUN apk add curl && python3 -m pip install -r /tmp/requirements.txt --break-system-packages && rm /tmp/requirements.txt
 
 WORKDIR /workspace
 # copy service files
