@@ -10,9 +10,9 @@ from traffic_managment.async_leaky_bucket import AsyncLeakyBucket
 from riot_games.service import RiotGamesService
 
 #Buckets
-account_by_id_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 2000 requests every 1 minute
-account_by_puuid_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 1000 requests every 1 minute
-match_by_id_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
+account_by_id_limiter = AsyncLeakyBucket(capacity=1000, leak_rate=1000/60) # 2000 requests every 1 minute
+account_by_puuid_limiter = AsyncLeakyBucket(capacity=1000, leak_rate=1000/60) # 1000 requests every 1 minute
+match_by_id_limiter = AsyncLeakyBucket(capacity=2000, leak_rate=2000/10) # 2000 requests every 10 seconds
 
 riot_games_service = RiotGamesService(os.getenv("RIOT_GAMES_API_KEY"))
 
