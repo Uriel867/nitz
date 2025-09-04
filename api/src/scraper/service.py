@@ -60,7 +60,6 @@ class LeagueOfGraphsScraper:
             full_summoner_name = full_summoners_names[i].get_text(strip=True)
             game_name, tag_line = full_summoner_name.split('#')
             data.append({
-                'full_summoner_name': full_summoner_name,
                 'game_name': game_name,
                 'tag_line': tag_line
             })
