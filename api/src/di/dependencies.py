@@ -13,6 +13,8 @@ from scraper.service import LeagueOfGraphsScraperService
 account_by_id_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 2000 requests every 1 minute
 account_by_puuid_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 1000 requests every 1 minute
 match_by_id_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
+match_timeline_by_match_id_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
+matches_by_puuid_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
 
 riot_games_service = RiotGamesService(os.getenv("RIOT_API_KEY"))
 
@@ -45,6 +47,12 @@ async def acquire_account_by_id_limiter(request: Request):
     
 async def acquire_match_by_match_id_limiter(request: Request):
     await match_by_id_limiter.acquire()
+    
+async def acquire_match_timeline_by_match_id_limiter(request: Request):
+    await match_timeline_by_match_id_limiter.acquire()
+
+async def acquire_matches_by_puuid_limiter(request: Request):
+    await matches_by_puuid_limiter.acquire()
 
 def provide_scraper():
     scraper = LeagueOfGraphsScraperService()

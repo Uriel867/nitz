@@ -1,7 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from di.dependencies import provide_riot_games_service
-from  di.dependencies import acquire_account_puuid_limiter,acquire_account_by_id_limiter,acquire_match_by_match_id_limiter
+from di.dependencies import acquire_account_puuid_limiter,acquire_account_by_id_limiter,acquire_match_by_match_id_limiter
+from di.dependencies import acquire_matches_by_puuid_limiter, acquire_match_timeline_by_match_id_limiter
 from .service import RiotGamesService
 from .models import RiotGamesRegion
 
@@ -33,10 +34,18 @@ def get_match_by_match_id(
 ):
     return service.get_match_by_match_id(match_id=match_id, region=region)
 
-@router.get("/by-puuid/{puuid}")
+@router.get("/match/by-puuid/{puuid}",dependencies=[Depends(acquire_matches_by_puuid_limiter)])
 def get_matches_by_puuid(
     puuid: str,
     service: RiotGamesServiceDependency,
     region: RiotGamesRegion=RiotGamesRegion.EUROPE
 ):
     return service.get_matches_by_puuid(puuid=puuid, region=region)
+
+@router.get("/match/timeline/{match_id}",dependencies=[Depends(acquire_match_timeline_by_match_id_limiter)])
+def get_match_timeline_by_match_id(
+    match_id: str,
+    service: RiotGamesServiceDependency,
+    region: RiotGamesRegion=RiotGamesRegion.EUROPE
+):
+    return service.get_match_timeline_by_match_id(match_id=match_id,region=region)
