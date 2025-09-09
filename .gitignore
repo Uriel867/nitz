@@ -12,6 +12,9 @@ data\db\
 *.bson
 mongod.lock
 
+#Airflow logs
+infra/airflow/logs/
+
 # Virtual environments
 venv/
 env/

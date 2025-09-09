@@ -1,71 +1,89 @@
+from typing import Dict, List
+from airflow import DAG
+from airflow.operators.python import PythonOperator,get_current_context
+from airflow.models import Variable
+from datetime import timedelta
 import requests
-import time
-import aiohttp
-import asyncio
 
-from includes import env
+start_page = Variable.get('start_page', default_var=1)
+end_page = Variable.get('end_page', default_var=10)
 
-from airflow.sdk import DAG, task
 
-# A DAG represents a workflow, a collection of tasks
+default_args = {
+    'owner': 'airflow',
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5)
+}
+
+regions = [
+    'br',
+    'eune',
+    'euw',
+    'jp',
+    'kr',
+    'lan',
+    'las',
+    'me',
+    'na',
+    'oce',
+    'ru',
+    'sea',
+    'tr',
+    'tw',
+    'vn'
+]
+
+def triggerer():
+    return True
+
+def scrape(start_page: int, end_page: int, region: str):
+    query_params = {
+        'start_page': start_page,
+        'end_page': end_page,
+        'region': region
+    }
+    response = requests.get('http://api:8080/scrape', params=query_params)
+    response.raise_for_status() # raise an HTTP error if necessary
+  
+    return response.json()
+
+def report(region: str):
+    current_task = get_current_context()['ti'] # ti - current task instance
+    summoners = current_task.xcom_pull(task_ids=f'scrape_{region}') #Pull the data from scrape node by region
+    
+    response = requests.post('http://api:8080/reporter/multiple',json=summoners) #report to mongodb
+    response.raise_for_status() # raise an HTTP error if necessary
+
+ 
 with DAG(
-    dag_id='scrape-load-transform', 
+    dag_id='scrape_load_transform',
+    default_args=default_args,
     catchup=False
 ) as dag:
-    # global variables for the tasks in the DAG
-    start_page = 1
-    end_page = 250
-    regions = ['br', 'eune', 'euw', 'jp', 'kr', 'lan', 'las', 'me', 'na', 'oce', 'ru', 'sea', 'tr', 'tw', 'vn']
-
-    # initial task to trigger all scraping tasks
-    @task(task_id='triggerer')
-    def triggerer(**kwargs):
-        return True
-
-    @task(task_id='scrape')
-    def scrape(start_page: int, end_page: int, region: str, **kwargs):
-        query_params = {'start_page': start_page, 'end_page': end_page, 'region': region}
-        response = requests.get(f'{env.API_URL}/scrape', params=query_params)
-        json_data = response.json()
-        # push status code to checkin later tasks if it was successful
-        # kwargs['task_instance'].xcom_push(key='scrape_data', value=json_data)
-        return json_data
     
-    @task(task_id='load-to-mongodb')
-    def load_to_mongodb(**kwargs):
-        # getting the returned value from the scrape task
-        scraped_data = kwargs['task_instance'].xcom_pull(task_ids='scrape', key='return_value')
-        # reporting to mongo
-        asyncio.run(report_summoners(scraped_data))
+    triggerer_task = PythonOperator(
+        task_id='triggerer',
+        python_callable=triggerer
+    )
+    
+    #scrape for each region
+    for region in regions:
+        scrape_task = PythonOperator(
+            task_id=f'scrape_{region}',
+            python_callable=scrape,
+            op_kwargs={
+                'start_page': start_page,
+                'end_page': end_page,
+                'region': region,
+            },
+        )
 
+        #report for each region
+        report_task = PythonOperator(
+            task_id=f'report_{region}',
+            python_callable=report,
+            op_kwargs={'region': region},
+        )
 
-    # creating a list of scrape tasks for each region
-    scrape_tasks = [
-        scrape(start_page=start_page, end_page=end_page, region=region) for region in regions
-    ]
-
-    # setting the dependencies: triggerer -> all scrape tasks
-    triggerer() >> scrape_tasks
-
-    # setting the dependencies for the report & transform tasks: after all scrape tasks are done
-    [task >> load_to_mongodb() for task in scrape_tasks]
-
-async def report_summoners(data):
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(f'{env.API_URL}/reporter/multiple', json=data) as response:
-                json_data = await response.json()
-                return json_data
-    except:
-        return None
-
-async def report_summoner(summoner_data, futures):
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(f'{env.API_URL}/scrape/reporter/summoner', params=summoner_data) as response:
-                futures.append(await response.json())
-    except:
-        return None
-
-async def await_futures(futures):
-    await asyncio.gather(*futures)
+        # Airflow runs them in a parallel way and not one by one 
+        triggerer_task >> scrape_task >> report_task
