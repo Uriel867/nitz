@@ -37,3 +37,13 @@ class RiotGamesService():
         if "status" in response.json().keys():
             return {"success":False}
         return response.json()
+    
+    
+    def get_matches_by_puuid(self,puuid: str, region: str='europe'):
+        base_url = self.base_url.replace(self.region_placeholder,region)
+        url = f'https://{base_url}/lol/match/v5/matches/by-puuid/{puuid}/ids'
+        
+        response = requests.get(url, headers=self.headers)
+        if "status" in response.json().keys():
+            return {"success":False}
+        return response.json()

@@ -32,3 +32,11 @@ def get_match_by_match_id(
     region: RiotGamesRegion=RiotGamesRegion.EUROPE
 ):
     return service.get_match_by_match_id(match_id=match_id, region=region)
+
+@router.get("/by-puuid/{puuid}")
+def get_matches_by_puuid(
+    puuid: str,
+    service: RiotGamesServiceDependency,
+    region: RiotGamesRegion=RiotGamesRegion.EUROPE
+):
+    return service.get_matches_by_puuid(puuid=puuid, region=region)
