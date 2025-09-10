@@ -50,7 +50,7 @@ class RiotGamesService():
     
     def get_match_timeline_by_match_id(self, match_id: str, region: str='europe'):
         base_url = self.base_url.replace(self.region_placeholder,region)
-        url = f'/lol/match/v5/matches/{match_id}/timeline'
+        url = f'https://{base_url}/lol/match/v5/matches/{match_id}/timeline'
         
         response = requests.get(url, headers=self.headers)
         if "status" in response.json().keys():
