@@ -25,7 +25,7 @@ def get_account_by_puuid(puuid: str,
 ):
     return service.get_account_by_puuid(puuid=puuid, region=region)
 
-@router.get("/match/by-match-id{match_id}",dependencies=[Depends(acquire_match_by_match_id_limiter)])
+@router.get("/match/by-match-id/{match_id}",dependencies=[Depends(acquire_match_by_match_id_limiter)])
 def get_match_by_match_id(
     match_id: str,
     service: RiotGamesServiceDependency,

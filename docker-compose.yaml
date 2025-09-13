@@ -1,3 +1,11 @@
+include:
+  - path: infra/airflow/docker-compose.yaml
+    ports:
+      - 8080:8080
+    env_file:
+      - .env.global
+      - infra/airflow/.env
+
 services:
   api:
     build: api/
@@ -15,9 +23,6 @@ services:
 
     # checking service is up every 5 seconds
    
-    env_file:
-      - ./api/.env
-    # checking service is up every 5 seconds
     healthcheck:
       test: ["CMD-SHELL", "curl http://0.0.0.0:8080/health || exit 1"]
       interval: 60s
@@ -45,7 +50,7 @@ services:
   postgres:
     build: infra/postgres
     ports:
-      - 5555:5432
+      - 5432:5432
     env_file:
       - .env.global
       - ./infra/postgres/.env

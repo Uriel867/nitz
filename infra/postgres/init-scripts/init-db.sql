@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS api.summoner_info (
 
 CREATE TABLE IF NOT EXISTS api.match_id (
     matchId TEXT PRIMARY KEY,
-    puuid TEXT REFERENCES summoner_info(puuid)
+    puuid TEXT REFERENCES api.summoner_info(puuid)
 );
 
 CREATE TABLE IF NOT EXISTS api.challenge (
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS api.participant (
     playerSubteamId INTEGER,
     profileIcon INTEGER,
     pushPings INTEGER,
-    puuid TEXT REFERENCES summoner_info(puuid),
+    puuid TEXT REFERENCES api.summoner_info(puuid),
     quadraKills INTEGER,
     retreatPings INTEGER,
     role TEXT,
