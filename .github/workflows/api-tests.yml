@@ -1,0 +1,29 @@
+name: API Tests
+on:
+  pull_request:
+    paths:
+      - api/**
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-22.04
+    env:
+      RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
+      MONGODB_URL: ${{ secrets.MONGODB_URL }}
+      POSTGRES_DB_URL: ${{ secrets.POSTGRES_DB_URL }}
+    container:
+      image: python:3.13-alpine3.22
+    steps:
+      - name: Initial checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: python3 -m pip install -r api/requirements.txt pytest
+
+      - name: Start API and run tests
+        run: |
+          uvicorn main:app --host 0.0.0.0 --port 8080 --reload &
+          sleep 5
+          pytest ../tests
+        working-directory: api/src
