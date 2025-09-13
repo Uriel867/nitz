@@ -10,11 +10,11 @@ from reporter.service import LoLStatsService
 from scraper.service import ScraperService
 
 #Buckets
-account_by_id_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 2000 requests every 1 minute
-account_by_puuid_limiter = AsyncLeakyBucket(capacity=1000,leak_rate=1000/60) # 1000 requests every 1 minute
-match_by_match_id_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
-match_timeline_by_match_id_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
-matches_by_puuid_limiter = AsyncLeakyBucket(2000,2000/10) # 2000 requests every 10 seconds
+account_by_id_limiter = AsyncLeakyBucket(capacity=1000, leak_rate=1000/60) # 2000 requests every 1 minute
+account_by_puuid_limiter = AsyncLeakyBucket(capacity=1000, leak_rate=1000/60) # 1000 requests every 1 minute
+match_by_match_id_limiter = AsyncLeakyBucket(capacity=2000, leak_rate=2000/10) # 2000 requests every 10 seconds
+match_timeline_by_match_id_limiter = AsyncLeakyBucket(capacity=2000, leak_rate=2000/10) # 2000 requests every 10 seconds
+matches_by_puuid_limiter = AsyncLeakyBucket(capacity=2000, leak_rate=2000/10) # 2000 requests every 10 seconds
 
 riot_games_service = RiotGamesService(os.getenv("RIOT_API_KEY"))
 
@@ -23,7 +23,7 @@ _postgres_metadata = None
 
 #Dependencies for LolStatsService
 def provide_mongo_client():
-    mongo_host = os.getenv("MONGO_HOST")
+    mongo_host = os.getenv("MONGODB_URL")
     mongo_client = MongoClient(host=mongo_host)
     
     try:
@@ -33,7 +33,8 @@ def provide_mongo_client():
         mongo_client.close()
     
 def provide_lol_stats_service(
-    mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]) -> LoLStatsService:
+        mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]
+) -> LoLStatsService:
     return LoLStatsService(mongo_client)
 
 #Dependencies for RiotGameService
@@ -76,8 +77,3 @@ def provide_postgres_engine():
     
     yield _postgres_engine
 
-# Dependency function for LoLStatsService
-def provide_lol_stats_service(
-    mongo_client: Annotated[MongoClient, Depends(provide_mongo_client)]
-) -> LoLStatsService:
-    return LoLStatsService(mongo_client)
