@@ -22,6 +22,10 @@ def test_scrape_endpoint():
     assert len(response.json()) == 100
 
 def test_puuid_retrieval():
-    response = retrieve_puuid('eune', 'ice cubes', 'europe')
+    response = retrieve_puuid(game_name='ice cubes', tag_line='eune', region='europe')
+    json = response.json()
+
     assert response.status_code == 200
-    assert 'puuid' in response.json().keys()
+    assert 'puuid' in json.keys() \
+        and 'tagLine' in json.keys() \
+        and 'gameName' in json.keys()
