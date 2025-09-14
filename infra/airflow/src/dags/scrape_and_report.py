@@ -8,7 +8,7 @@ from tasks.report_to_mongo import report as report_to_mongo
 default_args = {
     'owner': 'airflow',
     'retries': 1,
-    'retry_delay': timedelta(minutes=5)
+    'retry_delay': timedelta(seconds=10)
 }
 
 def triggerer():

@@ -1,9 +1,10 @@
 import requests
 from airflow.models import Variable
+from airflow.exceptions import AirflowException
 
 
-start_page = Variable.get('start_page', default_var=1)
-end_page = Variable.get('end_page', default_var=10)
+start_page = Variable.get('START_PAGE', default_var=1)
+end_page = Variable.get('END_PAGE', default_var=1)
 
 
 REGIONS = [
@@ -31,9 +32,9 @@ def scrape(start_page: int, end_page: int, region: str):
         'region': region
     }
     
-    try:
-        response = requests.get('http://api:8080/scrape', params=query_params)
-    except:
-        response.raise_for_status() # raise an HTTP error if necessary
-  
+    response = requests.get('http://api:8080/scrape', params=query_params)
+
+    if response.status_code != 200:
+        raise AirflowException(f'scraping {region} task failed')
+
     return response.json()

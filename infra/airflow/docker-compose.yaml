@@ -229,6 +229,8 @@ services:
         ls -la /opt/airflow/{logs,dags,plugins,config}
         
         airflow db migrate
+        airflow variables set START_PAGE 1
+        airflow variables set END_PAGE 1
 
     # yamllint enable rule:line-length
     environment:
