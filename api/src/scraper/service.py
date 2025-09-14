@@ -6,7 +6,7 @@ import asyncio
 from .exceptions import HttpResponseException
 
 
-class LeagueOfGraphsScraper:
+class ScraperService:
     def __init__(self, base_url='https://www.leagueofgraphs.com/rankings/summoners'):
         super().__init__()
 
@@ -21,7 +21,7 @@ class LeagueOfGraphsScraper:
         )
         
         
-    async def get_data_from_page(self, start_page: int, end_page: int, region: str) -> List[Dict[str, str]]:
+    async def scrape_pages(self, start_page: int, end_page: int, region: str) -> List[Dict[str, str]]:
         # container to hold all the retrieved data
         data = []
         futures = []

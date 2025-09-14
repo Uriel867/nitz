@@ -1,4 +1,5 @@
 **/__pycache__
+.env.global
 **/.env
 .vscode
 # MongoDB data directory
@@ -11,6 +12,9 @@ data\db\
 *.bson
 mongod.lock
 
+#Airflow logs
+infra/airflow/logs/
+
 # Virtual environments
 venv/
 env/
@@ -18,4 +22,9 @@ ENV/
 .venv/
 .env/
 
-**/__pycache__
+.idea
+
+infra/data
+infra/airflow/src/logs
+infra/airflow/src/plugins
+infra/airflow/data

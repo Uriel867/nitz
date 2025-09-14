@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from typing import Dict
+
 class LoLStatsService:
     
     def __init__(self, mongo_client: MongoClient):
