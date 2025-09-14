@@ -50,7 +50,7 @@ services:
   postgres:
     build: infra/postgres
     ports:
-      - 5432:5432
+      - 5555:5432
     env_file:
       - .env.global
       - ./infra/postgres/.env

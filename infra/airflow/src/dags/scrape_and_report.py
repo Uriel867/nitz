@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
-from tasks.scrape import regions, scrape, start_page, end_page
+from tasks.scrape import REGIONS, scrape, start_page, end_page
 from tasks.report_to_mongo import report as report_to_mongo
 
 
@@ -26,7 +26,7 @@ with DAG(
     )
     
     #scrape for each region
-    for region in regions:
+    for region in REGIONS:
         scrape_task = PythonOperator(
             task_id=f'scrape_{region}',
             python_callable=scrape,
