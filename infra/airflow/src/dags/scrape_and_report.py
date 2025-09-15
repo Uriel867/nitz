@@ -1,8 +1,8 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
-from tasks.scrape import REGIONS, scrape, start_page, end_page
-from tasks.report_to_mongo import report as report_to_mongo
+from tasks.scrape_and_report.scrape import REGIONS, scrape, start_page, end_page
+from tasks.scrape_and_report.report_to_mongo import report as report_to_mongo
 
 
 default_args = {
