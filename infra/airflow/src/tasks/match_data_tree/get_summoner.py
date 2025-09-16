@@ -20,15 +20,18 @@ def get_summoner_puuid():
 
     return data['puuid']
 
-def get_summoner_matches(puuid):
-    current_task = get_current_context()['ti']  # ti - current task instance
-    puuid = current_task.xcom_pull(task_ids=f'summoner_puuid')
+def get_summoner_matches():
+    puuid = get_summoner_puuid()
 
     response = requests.get(f'http://api:8080/match/by-puuid/{puuid}')
 
     return response.json()
 
-def get_match_participants(match_id):
+def get_match_participants():
+    current_task = get_current_context()['ti']  # ti - current task instance
+    matches = current_task.xcom_pull(task_ids=f'summoner_matches')
+    match_id = matches[0]
+
     response = requests.get(f'http://api:8080/match/by-match-id/{match_id}')
     match_data = response.json()
 

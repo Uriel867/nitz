@@ -1,27 +1,11 @@
 from typing import List, Dict
 from bs4 import BeautifulSoup
+from .utils import SUB_REGION_TO_REGION
 import cloudscraper
 import asyncio
 
 from .exceptions import HttpResponseException
 
-regions = {
-    'na': 'americas',
-    'br': 'americas',
-    'lan': 'americas',
-    'las': 'americas',
-    'euw': 'europe',
-    'eune': 'europe',
-    'tr': 'europe',
-    'ru': 'europe',
-    'kr': 'asia',
-    'jp': 'asia',
-    'ph': 'asia',
-    'sg': 'asia',
-    'th': 'asia',
-    'tw': 'asia',
-    'vn': 'asia'
-}
 
 class ScraperService:
     def __init__(self, base_url='https://www.leagueofgraphs.com/rankings/summoners'):
@@ -81,7 +65,7 @@ class ScraperService:
                 'game_name': game_name,
                 'tag_line': tag_line,
                 'sub_region': sub_region,
-                'region': regions[sub_region]
+                'region': SUB_REGION_TO_REGION[sub_region]
             })
         
         return data
