@@ -5,7 +5,6 @@ import os
 
 start_page = Variable.get('START_PAGE', default_var=1)
 end_page = Variable.get('END_PAGE', default_var=1)
-nitz_api_url = os.getenv('NITZ_API_URL')
 
 
 REGIONS = [
@@ -32,10 +31,13 @@ def scrape(start_page: int, end_page: int, region: str):
         'end_page': end_page,
         'region': region
     }
-    
-    response = requests.get(f'{nitz_api_url}/scrape', params=query_params)
 
-    if response.status_code != 200:
-        raise AirflowException(f'scraping {region} task failed')
+    try:
+        response = requests.get(f'{os.getenv('NITZ_API_URL')}/scrape', params=query_params)
+        if response.status_code != 200:
+            raise AirflowException(f'scraping {region} task failed')
+
+    except Exception as e:
+        raise AirflowException(f'API request failed with exception {e}')
 
     return response.json()

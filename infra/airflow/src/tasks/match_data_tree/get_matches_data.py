@@ -3,21 +3,26 @@ from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
 import os
 
-nitz_api_url = os.getenv('NITZ_API_URL')
 
 def get_summoner_list():
-    response = requests.get(f'{nitz_api_url}/reporter/all')
+    try:
+        response = requests.get(f'{os.getenv('NITZ_API_URL')}/reporter/all')
+        if response.status_code != 200:
+            raise AirflowException('Failed to fetch summoner list')
 
-    if response.status_code != 200:
-        raise AirflowException('Failed to fetch summoner list')
+    except Exception as e:
+        raise AirflowException(f'API request failed with exception {e}')
 
     return response.json()
 
 def get_puuid(tag_line: str,summoner_name: str, region: str):
-    response = requests.get(f'{nitz_api_url}/account/{region}/{summoner_name}/{tag_line}')
+    try:
+        response = requests.get(f'{os.getenv('NITZ_API_URL')}/account/{region}/{summoner_name}/{tag_line}')
+        if response.status_code != 200:
+            raise AirflowException(f'Failed to fetch puuid for tag_line: {tag_line} and summoner_name: {summoner_name} and region: {region}')
 
-    if response.status_code != 200:
-        raise AirflowException(f'Failed to fetch puuid for tag_line: {tag_line} and summoner_name: {summoner_name} and region: {region}')
+    except Exception as e:
+        raise AirflowException(f'API request failed with exception {e}')
 
     data = response.json()
 
@@ -40,24 +45,32 @@ def get_first_summoner_puuid():
 
 
 def get_summoner_matches(puuid):
-    response = requests.get(f'{nitz_api_url}/match/by-puuid/{puuid}')
-    if response.status_code != 200:
-        raise AirflowException(f'Failed to fetch summoner matches for puuid: {puuid}')
+    try:
+        response = requests.get(f'{os.getenv('NITZ_API_URL')}/match/by-puuid/{puuid}')
+        if response.status_code != 200:
+            raise AirflowException(f'Failed to fetch summoner matches for puuid: {puuid}')
 
-    if not response.text.strip():
-        return []
+        if not response.text.strip():
+            return []
+
+    except Exception as e:
+        raise AirflowException(f'API request failed with exception {e}')
+
     return response.json()
 
 
 def get_match_participants(match_id):
-    response = requests.get(f'{nitz_api_url}match/by-match-id/{match_id}')
-    if response.status_code != 200:
-        raise AirflowException(f'Failed to fetch participants for match_id: {match_id}')
+    try:
+        response = requests.get(f'{os.getenv('NITZ_API_URL')}match/by-match-id/{match_id}')
+        if response.status_code != 200:
+            raise AirflowException(f'Failed to fetch participants for match_id: {match_id}')
 
-    match_data = response.json()
+        match_data = response.json()
+        if 'metadata' not in match_data:
+            return []
 
-    if 'metadata' not in match_data:
-        return []
+    except Exception as e:
+        raise AirflowException(f'API request failed with exception {e}')
 
     match_participants = match_data['metadata']['participants']
     return match_participants
