@@ -1,10 +1,11 @@
 import requests
 from airflow.models import Variable
 from airflow.exceptions import AirflowException
-
+import os
 
 start_page = Variable.get('START_PAGE', default_var=1)
 end_page = Variable.get('END_PAGE', default_var=1)
+nitz_api_url = os.getenv('NITZ_API_URL')
 
 
 REGIONS = [
@@ -32,7 +33,7 @@ def scrape(start_page: int, end_page: int, region: str):
         'region': region
     }
     
-    response = requests.get('http://api:8080/scrape', params=query_params)
+    response = requests.get(f'{nitz_api_url}/scrape', params=query_params)
 
     if response.status_code != 200:
         raise AirflowException(f'scraping {region} task failed')

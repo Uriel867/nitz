@@ -1,14 +1,16 @@
 import requests
 from airflow.operators.python import get_current_context
+import os
 
+nitz_api_url = os.getenv('NITZ_API_URL')
 
 def get_summoner_list():
-    response = requests.get('http://api:8080/reporter/all')
+    response = requests.get(f'{nitz_api_url}/reporter/all')
 
     return response.json()
 
 def get_puuid(tag_line: str,summoner_name: str, region: str):
-    response = requests.get(f'http://api:8080/account/{region}/{summoner_name}/{tag_line}')
+    response = requests.get(f'{nitz_api_url}/account/{region}/{summoner_name}/{tag_line}')
     data = response.json()
 
     return data['puuid']
@@ -27,7 +29,7 @@ def get_first_summoner_puuid():
 
 def get_summoner_matches(puuid):
 
-    response = requests.get(f'http://api:8080/match/by-puuid/{puuid}')
+    response = requests.get(f'{nitz_api_url}/match/by-puuid/{puuid}')
     if not response.text.strip():
         return []
     return response.json()
@@ -37,7 +39,7 @@ def get_match_participants(match_id):
     #current_task = get_current_context()['ti']  # ti - current task instance
     #matches = current_task.xcom_pull(task_ids=f'summoner_matches')
 
-    response = requests.get(f'http://api:8080/match/by-match-id/{match_id}')
+    response = requests.get(f'{nitz_api_url}match/by-match-id/{match_id}')
     match_data = response.json()
     print(f'match_id is {match_id}')
     if 'metadata' not in match_data:
