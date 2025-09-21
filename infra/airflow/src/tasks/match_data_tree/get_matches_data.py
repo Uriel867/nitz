@@ -1,4 +1,5 @@
 import requests
+from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
 import os
 
@@ -7,10 +8,17 @@ nitz_api_url = os.getenv('NITZ_API_URL')
 def get_summoner_list():
     response = requests.get(f'{nitz_api_url}/reporter/all')
 
+    if response.status_code != 200:
+        raise AirflowException('Failed to fetch summoner list')
+
     return response.json()
 
 def get_puuid(tag_line: str,summoner_name: str, region: str):
     response = requests.get(f'{nitz_api_url}/account/{region}/{summoner_name}/{tag_line}')
+
+    if response.status_code != 200:
+        raise AirflowException(f'Failed to fetch puuid for tag_line: {tag_line} and summoner_name: {summoner_name} and region: {region}')
+
     data = response.json()
 
     return data['puuid']
@@ -18,6 +26,10 @@ def get_puuid(tag_line: str,summoner_name: str, region: str):
 def get_first_summoner_puuid():
     current_task = get_current_context()['ti']  # ti - current task instance
     summoners = current_task.xcom_pull(task_ids='summoner_list')
+
+    if summoners is None:
+        raise AirflowException('Summoner list is empty')
+
     region = summoners[0]['region']
     tag_line = summoners[0]['tag_line']
     summoner_name = summoners[0]['game_name']
@@ -28,22 +40,25 @@ def get_first_summoner_puuid():
 
 
 def get_summoner_matches(puuid):
-
     response = requests.get(f'{nitz_api_url}/match/by-puuid/{puuid}')
+    if response.status_code != 200:
+        raise AirflowException(f'Failed to fetch summoner matches for puuid: {puuid}')
+
     if not response.text.strip():
         return []
     return response.json()
 
 
 def get_match_participants(match_id):
-    #current_task = get_current_context()['ti']  # ti - current task instance
-    #matches = current_task.xcom_pull(task_ids=f'summoner_matches')
-
     response = requests.get(f'{nitz_api_url}match/by-match-id/{match_id}')
+    if response.status_code != 200:
+        raise AirflowException(f'Failed to fetch participants for match_id: {match_id}')
+
     match_data = response.json()
-    print(f'match_id is {match_id}')
+
     if 'metadata' not in match_data:
         return []
+
     match_participants = match_data['metadata']['participants']
     return match_participants
 
