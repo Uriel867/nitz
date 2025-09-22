@@ -1,8 +1,8 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
-from tasks.match_data_tree.get_matches_data import get_summoner_list, get_first_summoner_puuid, get_matches_ids
-from tasks.match_data_tree.report_matches import report_matches_to_mongo
+from tasks.match_data_tree.get_matches_ids import get_summoner_list, get_first_summoner_puuid, get_matches_ids
+from tasks.match_data_tree.report_matches_data import report_matches_to_mongo
 
 default_args = {
     'owner': 'airflow',
