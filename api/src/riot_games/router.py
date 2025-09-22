@@ -1,12 +1,17 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
-from di.dependencies import provide_riot_games_service
-from di.dependencies import acquire_account_puuid_limiter,acquire_account_by_id_limiter,acquire_match_by_match_id_limiter,acquire_matches_by_puuid_limiter, acquire_match_timeline_by_match_id_limiter
+from di.dependencies import (
+    provide_riot_games_service,
+    acquire_account_puuid_limiter, acquire_account_by_id_limiter,
+    acquire_match_by_match_id_limiter, acquire_matches_by_puuid_limiter,
+    acquire_match_timeline_by_match_id_limiter,
+    acquire_api_key_small_limiter, acquire_api_key_big_limiter
+)
 from .service import RiotGamesService
 from .models import RiotGamesRegion
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(acquire_api_key_small_limiter),Depends(acquire_api_key_big_limiter)])
 
 RiotGamesServiceDependency = Annotated[RiotGamesService,Depends(provide_riot_games_service)]
 
