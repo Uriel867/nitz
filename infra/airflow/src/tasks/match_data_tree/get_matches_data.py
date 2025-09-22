@@ -44,25 +44,29 @@ def get_matches_ids(depth):
     current_task = get_current_context()['ti']  # ti - current task instance
     root_puuid = current_task.xcom_pull(task_ids='get_first_summoner_puuid')
 
-
     matches_ids = get_summoner_matches(root_puuid)
-    matches_puuids = []
+    matches_participants = []
     seen_puuids = {root_puuid}
     seen_matches = set()
 
     while depth > 0:
-        matches_puuids.extend(puuid
-                              for match_id in matches_ids
-                              for puuid in get_match_participants(match_id) if puuid not in seen_puuids
-        )
-        seen_puuids.update(matches_puuids)
-
-        matches_ids.extend(match_id
-                           for puuid in matches_puuids
-                           for match_id in get_summoner_matches(puuid) if match_id not in seen_matches and '_' in match_id
-        )
-        seen_matches.update(matches_ids)
-
+        get_puuids_from_matches(matches_ids, seen_puuids, matches_participants)
+        get_matches_ids_from_participants(matches_ids,matches_participants,seen_matches)
         depth -= 1
 
     return matches_ids
+
+def get_puuids_from_matches(matches_ids, seen_puuids, matches_participants):
+    for match_id in matches_ids:
+        for puuid in get_match_participants(match_id):
+            if puuid not in seen_puuids:
+                seen_puuids.add(puuid)
+                matches_participants.append(puuid)
+
+
+def get_matches_ids_from_participants(matches_ids, matches_participants, seen_matches):
+    for puuid in matches_participants:
+        for match_id in get_summoner_matches(puuid):
+            if match_id not in seen_matches and '_' in match_id:
+                seen_matches.add(match_id)
+                matches_ids.append(match_id)
