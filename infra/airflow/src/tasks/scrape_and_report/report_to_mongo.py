@@ -1,7 +1,5 @@
 from airflow.operators.python import get_current_context
-from airflow.exceptions import AirflowException
 from utils.exceptions import request_with_handle
-import requests
 import os
 
 

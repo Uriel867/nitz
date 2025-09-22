@@ -1,4 +1,3 @@
-import requests
 from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
 from utils.exceptions import request_with_handle

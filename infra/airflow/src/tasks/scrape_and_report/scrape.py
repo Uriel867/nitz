@@ -1,6 +1,4 @@
-import requests
 from airflow.models import Variable
-from airflow.exceptions import AirflowException
 from utils.exceptions import request_with_handle
 import os
 
