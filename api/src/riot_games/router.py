@@ -10,7 +10,7 @@ from di.dependencies import (
 from .service import RiotGamesService
 from .models import RiotGamesRegion
 
-
+# two buckets to limit the api key it self. 120 requests per 2 minutes and 20 requests per 1 second
 router = APIRouter(dependencies=[Depends(acquire_api_key_small_limiter),Depends(acquire_api_key_big_limiter)])
 
 RiotGamesServiceDependency = Annotated[RiotGamesService,Depends(provide_riot_games_service)]
