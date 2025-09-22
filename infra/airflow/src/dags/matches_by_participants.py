@@ -37,7 +37,7 @@ with DAG(
     match_tree_task = PythonOperator(
         task_id='match_tree',
         python_callable=get_matches_ids,
-        op_kwargs={'depth':0},
+        op_kwargs={'depth':1},
     )
 
     report_to_mongo_task = PythonOperator(
