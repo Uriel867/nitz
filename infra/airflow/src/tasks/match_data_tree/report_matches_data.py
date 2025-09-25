@@ -1,9 +1,9 @@
 from airflow.operators.python import get_current_context
-from utils.exceptions import request_with_handle
+from utils.http_requests import request_with_handle
 import os
 import asyncio
 
-def report_matches_to_mongo():
+def fetch_and_report_all_matches_task():
     current_task = get_current_context()['ti']
     matches_ids = current_task.xcom_pull(task_ids='match_tree')
     asyncio.run(fetch_and_report_all_matches(matches_ids))
@@ -19,8 +19,8 @@ async def fetch_and_report_match(match_id):
 
 
 async def fetch_match_data(match_id: str):
-    return request_with_handle('GET',f'{os.getenv('NITZ_API_URL')}/match/by-match-id/{match_id}')
+    return await request_with_handle('GET',f'{os.getenv('NITZ_API_URL')}/match/by-match-id/{match_id}')
 
 
 async def report_match(match_id:str, match_data: dict):
-    request_with_handle(method='POST', url=f'{os.getenv('NITZ_API_URL')}/reporter/match', params={'match_id': match_id}, json=match_data )
+    await request_with_handle(method='POST', url=f'{os.getenv('NITZ_API_URL')}/reporter/match', params={'match_id': match_id}, json=match_data )

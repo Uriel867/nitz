@@ -1,8 +1,8 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
-from tasks.match_data_tree.get_matches_ids import get_summoner_list, get_first_summoner_puuid, get_matches_ids
-from tasks.match_data_tree.report_matches_data import report_matches_to_mongo
+from tasks.match_data_tree.get_matches_ids import fetch_all_summoners_task, fetch_first_summoner_puuid_task, fetch_matches_ids_task
+from tasks.match_data_tree.report_matches_data import fetch_and_report_all_matches_task
 
 default_args = {
     'owner': 'airflow',
@@ -26,23 +26,23 @@ with DAG(
 
     summoner_list_task = PythonOperator(
         task_id='summoner_list',
-        python_callable=get_summoner_list
+        python_callable=fetch_all_summoners_task
     )
 
     get_first_summoner_puuid_task = PythonOperator(
         task_id='get_first_summoner_puuid',
-        python_callable=get_first_summoner_puuid
+        python_callable=fetch_first_summoner_puuid_task
     )
 
     match_tree_task = PythonOperator(
         task_id='match_tree',
-        python_callable=get_matches_ids,
+        python_callable=fetch_matches_ids_task,
         op_kwargs={'depth':1},
     )
 
     report_to_mongo_task = PythonOperator(
         task_id='report_to_mongo',
-        python_callable=report_matches_to_mongo,
+        python_callable=fetch_and_report_all_matches_task,
     )
 
 

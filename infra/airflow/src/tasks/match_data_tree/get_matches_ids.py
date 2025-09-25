@@ -1,22 +1,26 @@
 from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
-from utils.exceptions import request_with_handle
+from utils.http_requests import request_with_handle
 import os
+import asyncio
+
+def fetch_all_summoners_task():
+    return asyncio.run(fetch_all_summoners())
+
+async def fetch_all_summoners():
+    return await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/reporter/all')
 
 
-def get_summoner_list():
-    return request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/reporter/all')
-
-
-def get_puuid(tag_line: str,summoner_name: str, region: str):
-    summoner_data = request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/account/{region}/{summoner_name}/{tag_line}')
-
+async def fetch_puuid(tag_line: str, summoner_name: str, region: str):
+    summoner_data = await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/account/{region}/{summoner_name}/{tag_line}')
     return summoner_data['puuid']
 
-def get_first_summoner_puuid():
+def fetch_first_summoner_puuid_task():
     current_task = get_current_context()['ti']  # ti - current task instance
     summoners = current_task.xcom_pull(task_ids='summoner_list')
+    return asyncio.run(fetch_first_summoner_puuid(summoners))
 
+async def fetch_first_summoner_puuid(summoners):
     if summoners is None:
         raise AirflowException('Summoner list is empty')
 
@@ -24,48 +28,48 @@ def get_first_summoner_puuid():
     tag_line = summoners[0]['tag_line']
     summoner_name = summoners[0]['game_name']
 
-    puuid = get_puuid(tag_line, summoner_name, region)
+    puuid = await fetch_puuid(tag_line, summoner_name, region)
 
     return puuid
 
 
-def get_summoner_matches(puuid):
-    return request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/match/by-puuid/{puuid}')
+async def fetch_summoner_matches(puuid):
+    return await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/match/by-puuid/{puuid}')
 
 
-def get_match_participants(match_id):
-    match_data =request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/match/by-match-id/{match_id}')
+async def fetch_match_participants(match_id):
+    match_data = await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/match/by-match-id/{match_id}')
     match_participants = match_data['metadata']['participants']
 
     return match_participants
 
-def get_matches_ids(depth):
+def fetch_matches_ids_task(depth):
     current_task = get_current_context()['ti']  # ti - current task instance
     root_puuid = current_task.xcom_pull(task_ids='get_first_summoner_puuid')
 
-    matches_ids = get_summoner_matches(root_puuid)
+    matches_ids = asyncio.run(fetch_summoner_matches(root_puuid))
     matches_participants = []
     seen_puuids = {root_puuid}
     seen_matches = set()
 
     while depth > 0:
-        get_puuids_from_matches(matches_ids, seen_puuids, matches_participants)
-        get_matches_ids_from_participants(matches_ids,matches_participants,seen_matches)
+        fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants)
+        fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches)
         depth -= 1
 
     return matches_ids
 
-def get_puuids_from_matches(matches_ids, seen_puuids, matches_participants):
+def fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants):
     for match_id in matches_ids:
-        for puuid in get_match_participants(match_id):
+        for puuid in asyncio.run(fetch_match_participants(match_id)):
             if puuid not in seen_puuids:
                 seen_puuids.add(puuid)
                 matches_participants.append(puuid)
 
 
-def get_matches_ids_from_participants(matches_ids, matches_participants, seen_matches):
+def fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches):
     for puuid in matches_participants:
-        for match_id in get_summoner_matches(puuid):
+        for match_id in asyncio.run(fetch_summoner_matches(puuid)):
             if match_id not in seen_matches and '_' in match_id:
                 seen_matches.add(match_id)
                 matches_ids.append(match_id)
