@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import timedelta
 from tasks.scrape_and_report.scrape import REGIONS, scrape, start_page, end_page
-from tasks.scrape_and_report.report_to_mongo import report_summoners_task as report_to_mongo
+from tasks.scrape_and_report.report_summoners import report_summoners_task
 
 
 default_args = {
@@ -40,7 +40,7 @@ with DAG(
         #report for each region
         report_task = PythonOperator(
             task_id=f'report_{region}',
-            python_callable=report_to_mongo,
+            python_callable=report_summoners_task,
             op_kwargs={'region': region},
         )
 

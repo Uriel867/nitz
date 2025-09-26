@@ -16,7 +16,7 @@ async def request_with_handle(method: str, url: str, retries=5, **kwargs):
                     response.raise_for_status()
                     if method == 'GET':
                         return await response.json()
-                    return None
+                    return None # on successful POST request
         except aiohttp.ClientResponseError as e:
            if e.status in FAIL_REQUESTS and attempt == retries - 1:
                raise AirflowFailException(f'Request failed with exception {e} - failing task')
