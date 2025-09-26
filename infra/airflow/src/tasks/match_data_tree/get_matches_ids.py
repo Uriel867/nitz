@@ -51,25 +51,30 @@ def fetch_matches_ids_task(depth):
     matches_participants = []
     seen_puuids = {root_puuid}
     seen_matches = set()
+    match_ids_index  = 0
+    matches_participants_index = 0
 
     while depth > 0:
-        fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants)
-        fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches)
+        match_ids_index = fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants, match_ids_index)
+        matches_participants_index = fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches, matches_participants_index)
         depth -= 1
 
     return matches_ids
 
-def fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants):
-    for match_id in matches_ids:
-        for puuid in asyncio.run(fetch_match_participants(match_id)):
+def fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants, index):
+    while index < len(matches_ids):
+        for puuid in asyncio.run(fetch_match_participants(matches_ids[index])):
             if puuid not in seen_puuids:
                 seen_puuids.add(puuid)
                 matches_participants.append(puuid)
+        index += 1
+    return index
 
-
-def fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches):
-    for puuid in matches_participants:
-        for match_id in asyncio.run(fetch_summoner_matches(puuid)):
+def fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches, index):
+    while index < len(matches_participants):
+        for match_id in asyncio.run(fetch_summoner_matches(matches_participants[index])):
             if match_id not in seen_matches and '_' in match_id:
                 seen_matches.add(match_id)
                 matches_ids.append(match_id)
+        index += 1
+    return index
