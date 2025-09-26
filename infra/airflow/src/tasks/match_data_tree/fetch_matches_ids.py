@@ -1,5 +1,4 @@
 from typing import List
-
 from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
 from utils.http_requests import request_with_handle
@@ -51,6 +50,9 @@ async def fetch_match_participants(match_id: str):
     return match_participants
 
 def fetch_matches_ids_task(depth: int):
+    return asyncio.run(fetch_matches_ids(depth))
+
+async def fetch_matches_ids(depth: int):
     current_task = get_current_context()['ti']  # ti - current task instance
     matches_ids = current_task.xcom_pull(task_ids='fetch_first_summoner_matches')
     root_puuid = current_task.xcom_pull(task_ids='fetch_first_summoner_puuid')
@@ -62,24 +64,24 @@ def fetch_matches_ids_task(depth: int):
     matches_participants_index = 0
 
     while depth > 0:
-        match_ids_index = fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants, match_ids_index)
-        matches_participants_index = fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches, matches_participants_index)
+        match_ids_index = await fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants, match_ids_index)
+        matches_participants_index = await fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches, matches_participants_index)
         depth -= 1
 
     return matches_ids
 
-def fetch_puuids_from_matches(matches_ids: List[str], seen_puuids: set[str], matches_participants: List[str], index: int):
+async def fetch_puuids_from_matches(matches_ids: List[str], seen_puuids: set[str], matches_participants: List[str], index: int):
     while index < len(matches_ids):
-        for puuid in asyncio.run(fetch_match_participants(matches_ids[index])):
+        for puuid in await fetch_match_participants(matches_ids[index]):
             if puuid not in seen_puuids:
                 seen_puuids.add(puuid)
                 matches_participants.append(puuid)
         index += 1
     return index
 
-def fetch_matches_ids_from_participants(matches_ids: List[str], matches_participants: List[str], seen_matches: set[str], index: int):
+async def fetch_matches_ids_from_participants(matches_ids: List[str], matches_participants: List[str], seen_matches: set[str], index: int):
     while index < len(matches_participants):
-        for match_id in asyncio.run(fetch_first_summoner_matches(matches_participants[index])):
+        for match_id in await fetch_first_summoner_matches(matches_participants[index]):
             if match_id not in seen_matches and '_' in match_id:
                 seen_matches.add(match_id)
                 matches_ids.append(match_id)
