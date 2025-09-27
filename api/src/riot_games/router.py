@@ -7,8 +7,8 @@ from di.dependencies import (
     acquire_match_timeline_by_match_id_limiter,
     acquire_api_key_small_limiter, acquire_api_key_big_limiter
 )
-from .service import RiotGamesService
-from .models import RiotGamesRegion
+from riot_games.service import RiotGamesService
+from riot_games.models import RiotGamesRegion
 
 # two buckets to limit the api key it self. 120 requests per 2 minutes and 20 requests per 1 second
 router = APIRouter(dependencies=[Depends(acquire_api_key_small_limiter),Depends(acquire_api_key_big_limiter)])

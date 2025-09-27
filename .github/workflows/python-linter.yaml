@@ -27,5 +27,4 @@ jobs:
 
       - name: Run linter
         run: |
-          # black . --verbose --diff --check
-          find {api,infra,ml} -name '*.py' | xargs pylint --rcfile=.pylintrc
+          find . -name '*.py' | xargs pylint --rcfile=.pylintrc
