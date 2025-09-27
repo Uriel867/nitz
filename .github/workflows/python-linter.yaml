@@ -1,8 +1,5 @@
 name: Python Linter
 on:
-  push:
-    branches:
-      - '**' # any branch
   pull_request:
     branches:
       - '**'
