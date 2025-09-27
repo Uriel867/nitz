@@ -1,10 +1,9 @@
+import asyncio
 from typing import List, Dict
 from bs4 import BeautifulSoup
-from .utils import SUB_REGION_TO_REGION
 import cloudscraper
-import asyncio
-
-from .exceptions import HttpResponseException
+from scraper.utils import SUB_REGION_TO_REGION
+from scraper.exceptions import HttpResponseException
 
 
 class ScraperService:
@@ -31,7 +30,7 @@ class ScraperService:
         for page in range(start_page, end_page + 1):
             try:
                 futures.append(self._scrape_page(page=page, sub_region=sub_region))
-            except HttpResponseException as e:
+            except HttpResponseException:
                 break
 
         # awaiting all calls together
@@ -57,8 +56,8 @@ class ScraperService:
         full_summoners_names = soup.find_all('span', class_=['name'])
         # appending each game_name#tag_line to the data container
         data = []
-        for i in range(len(full_summoners_names)):
-            full_summoner_name = full_summoners_names[i].get_text(strip=True)
+        for _, summoner in enumerate(full_summoners_names):
+            full_summoner_name = summoner.get_text(strip=True)
             game_name, tag_line = full_summoner_name.split('#')
             data.append({
                 'full_summoner_name': full_summoner_name,

@@ -1,17 +1,11 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import timedelta
+from dags import default_args
 from tasks.match_data_tree.fetch_matches_ids import (
     fetch_all_summoners_task, fetch_first_summoner_puuid_task, fetch_matches_ids_task,
     fetch_first_summoner_matches_task)
 from tasks.match_data_tree.report_matches_data import fetch_and_report_chunk_task
 from tasks.match_data_tree.matches_ids_chunks import make_chunks_task
-
-default_args = {
-    'owner': 'airflow',
-    'retries': 1,
-    'retry_delay': timedelta(seconds=10)
-}
 
 def triggerer():
     return True

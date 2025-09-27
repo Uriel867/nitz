@@ -1,15 +1,10 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import timedelta
+
+from dags import default_args
 from tasks.scrape_and_report.scrape import REGIONS, scrape, start_page, end_page
 from tasks.scrape_and_report.report_summoners import report_summoners_task
 
-
-default_args = {
-    'owner': 'airflow',
-    'retries': 1,
-    'retry_delay': timedelta(seconds=10)
-}
 
 def triggerer():
     return True

@@ -11,6 +11,7 @@ disable=
     R0903, # too few public methods
     W0511, # TODOs
     W0621, # redefining name from outer scope
+    W0104, # no effect statements
     C0301, # line too long
     E0401 # unknown imports
 

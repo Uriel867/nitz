@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends
 from typing import Annotated,List,Dict
+from fastapi import APIRouter, Depends
 from reporter.service import LoLStatsService
 from di.dependencies import provide_lol_stats_service
 from .models import SummonerModel
