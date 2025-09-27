@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Initial checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Setup python 3.11
         uses: actions/setup-python@v5
@@ -23,8 +25,17 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install pylint black
+          python3 -m pip install pylint ruff
 
       - name: Run linter
         run: |
+          ruff check . --select=E231 --fix --preview
           find . -name '*.py' | xargs pylint --rcfile=.pylintrc
+          
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git diff --quiet && git diff --staged --quiet || git commit -m "fix: auto-fix spacing after commas"
+          git push origin HEAD:$(git branch --show-current)
