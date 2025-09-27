@@ -1,0 +1,34 @@
+name: Python Linter
+on:
+  push:
+    branches:
+      - '**' # any branch
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  pylint:
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Initial checkout
+        uses: actions/checkout@v4
+
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pylint black
+
+      - name: Run linter
+        run: |
+          # for reformatting automatically: black . --verbose
+          find {api,infra,ml} -name '*.py' | xargs pylint --rcfile=.pylintrc
