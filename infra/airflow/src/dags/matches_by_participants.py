@@ -39,7 +39,7 @@ with (DAG(
     match_tree_task = PythonOperator(
         task_id='fetch_matches_ids',
         python_callable=fetch_matches_ids_task,
-        op_kwargs={'depth':1},
+        op_kwargs={'depth': 1},
     )
 
     matches_ids_chunks_task = PythonOperator(

@@ -34,4 +34,4 @@ def scrape(start_page: int, end_page: int, region: str):
     return asyncio.run(scrape_pages(query_params))
 
 async def scrape_pages(query_params: dict):
-    return await request_with_handle(method='GET',url=f'{os.getenv("NITZ_API_URL")}/scrape', params=query_params)
+    return await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/scrape', params=query_params)

@@ -2,7 +2,7 @@ import asyncio
 import aiohttp
 from airflow.exceptions import AirflowException, AirflowFailException
 
-RETRY_REQUESTS = [429 ,500, 502, 503,504]
+RETRY_REQUESTS = [429 , 500, 502, 503, 504]
 FAIL_REQUESTS = [404]
 
 _TIMEOUT = aiohttp.ClientTimeout(total=900)  # 15 minutes overall timeout

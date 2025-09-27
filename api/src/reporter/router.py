@@ -1,11 +1,11 @@
-from typing import Annotated,List,Dict
+from typing import Annotated, List, Dict
 from fastapi import APIRouter, Depends
 from reporter.service import LoLStatsService
 from reporter.models import SummonerModel
 from di.dependencies import provide_lol_stats_service
 
 router = APIRouter(prefix="/reporter")
-LoLStatsServiceDependency = Annotated[LoLStatsService,Depends(provide_lol_stats_service)]
+LoLStatsServiceDependency = Annotated[LoLStatsService, Depends(provide_lol_stats_service)]
 
 
 @router.get("/by-id/{match_id}")

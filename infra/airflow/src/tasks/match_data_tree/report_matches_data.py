@@ -20,5 +20,5 @@ async def fetch_match_data(match_id: str):
     return await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/match/by-match-id/{match_id}')
 
 
-async def report_match(match_id:str, match_data: dict):
+async def report_match(match_id: str, match_data: dict):
     await request_with_handle(method='POST', url=f'{os.getenv("NITZ_API_URL")}/reporter/match', params={'match_id': match_id}, json=match_data )
