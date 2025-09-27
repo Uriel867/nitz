@@ -19,5 +19,5 @@ async def scrape_data(model: Annotated[LeagueOfGraphsModel, Query()], scraper: S
     return await scraper.scrape_pages(
         start_page=model.start_page,
         end_page=model.end_page,
-        region=model.region
+        sub_region=model.sub_region
     )

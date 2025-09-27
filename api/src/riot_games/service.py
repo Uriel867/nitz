@@ -15,8 +15,8 @@ class RiotGamesService:
         url = f'{base_url}/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}'
         
         response = requests.get(url,headers=self.headers)
-        if "status" in response.json().keys():
-            return {"success":False}
+        # if "status" in response.json().keys():
+        #     return {"success":False}
         return response.json()
 
     def get_account_by_puuid(self, puuid: str, region: str='europe'):
@@ -24,8 +24,8 @@ class RiotGamesService:
         url = f'{base_url}/riot/account/v1/accounts/by-puuid/{puuid}'
         
         response = requests.get(url,headers=self.headers)
-        if "status" in response.json().keys():
-            return {"success":False}
+        # if "status" in response.json().keys():
+        #     return {"success":False}
         return response.json()
 
     def get_match_by_match_id(self, match_id: str, region: str='europe'):
@@ -33,8 +33,8 @@ class RiotGamesService:
         url = f'{base_url}/lol/match/v5/matches/{match_id}'
         
         response = requests.get(url,headers=self.headers)
-        if "status" in response.json().keys():
-            return {"success":False}
+        # if "status" in response.json().keys():
+        #     return {"success":False}
         return response.json()
 
     def get_matches_by_puuid(self,puuid: str, region: str='europe'):
@@ -50,6 +50,6 @@ class RiotGamesService:
         url = f'{base_url}/lol/match/v5/matches/{match_id}/timeline'
         
         response = requests.get(url, headers=self.headers)
-        if "status" in response.json().keys():
-            return {"success":False}
+        # if "status" in response.json().keys():
+        #     return {"success":False}
         return response.json()
