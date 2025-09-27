@@ -29,4 +29,4 @@ ignore-mixin-members=yes
 
 [IMPORTS]
 known-standard-library=sys,os,re
-known-third-party=fastapi,requests,aiohttp,numpy,pandas,airflow,bs4,cloudscraper,pymongo
+known-third-party=fastapi,requests,aiohttp,numpy,pandas,airflow,bs4,cloudscraper,pymongo,sqlalchemy
