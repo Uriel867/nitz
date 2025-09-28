@@ -11,9 +11,9 @@ class LoLStatsService:
         
     #summoners
     
-    def insert_summoner(self, summoner_name: str, tag_line: str):
+    def insert_summoner(self, game_name: str, tag_line: str):
         try:
-            result = self.summoners_collection.insert_one({"summoner_name": summoner_name, "tag_line": tag_line})
+            result = self.summoners_collection.insert_one({"game_name": game_name, "tag_line": tag_line})
             return {"message": f"Inserted document with ID: {str(result.inserted_id)}", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}

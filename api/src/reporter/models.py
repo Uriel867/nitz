@@ -1,12 +1,12 @@
 from pydantic import BaseModel, model_validator
 
 class SummonerModel(BaseModel):
-    summoner_name: str
+    game_name: str
     tag_line: str
     
     @model_validator(mode='after')
-    def validate_summoner_name(self):
-        if self.summoner_name is None:
+    def validate_game_name(self):
+        if self.game_name is None:
             raise ValueError("Summoner name cannot be empty")
         return self
         
