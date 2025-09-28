@@ -1,0 +1,34 @@
+[MASTER]
+ignore=.github
+max-line-length=88
+
+[MESSAGES CONTROL]
+disable=
+    C0114, # missing module docstring
+    C0115, # missing class docstring
+    C0116, # missing function/method docstring
+    C0303, # trailing whitespaces
+    R0903, # too few public methods
+    W0511, # TODOs
+    W0621, # redefining name from outer scope
+    W0104, # no effect statements
+    W0718, # too general exception (enable this and fix!!!)
+    C0301, # line too long
+    E0401 # unknown imports
+
+[FORMAT]
+max-line-length=88
+# black-lines-between-methods=1
+
+[DESIGN]
+max-args=5
+max-locals=15
+max-branches=10
+max-statements=50
+
+[TYPECHECK]
+ignore-mixin-members=yes
+
+[IMPORTS]
+known-standard-library=sys,os,re
+known-third-party=fastapi,requests,aiohttp,numpy,pandas,airflow,bs4,cloudscraper,pymongo,sqlalchemy

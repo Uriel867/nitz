@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, model_validator
 from enum import StrEnum
+from pydantic import BaseModel, Field, model_validator
 
 
 class LeagueOfGraphsSubRegion(StrEnum):
@@ -32,4 +32,3 @@ class LeagueOfGraphsModel(BaseModel):
         if start_page > end_page:
             raise ValueError(f'end_page must satisfy end_page <= start_page, but instead got start_page = {start_page}, end_page = {end_page}')
         return self
-    

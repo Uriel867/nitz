@@ -1,4 +1,4 @@
-from pydantic import BaseModel,model_validator
+from pydantic import BaseModel, model_validator
 
 class SummonerModel(BaseModel):
     summoner_name: str

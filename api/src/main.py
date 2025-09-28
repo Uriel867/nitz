@@ -13,5 +13,3 @@ app.include_router(scraper_router)
 def health_check():
     return 200
     #TODO: check connection with db's
-
-

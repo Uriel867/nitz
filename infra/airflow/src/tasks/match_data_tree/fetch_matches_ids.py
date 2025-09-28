@@ -1,19 +1,19 @@
+import os
+import asyncio
 from typing import List
 from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
 from utils.http_requests import request_with_handle
-import os
-import asyncio
 
 def fetch_all_summoners_task():
     return asyncio.run(fetch_all_summoners())
 
 async def fetch_all_summoners():
-    return await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/reporter/all')
+    return await request_with_handle('GET', f'{os.getenv("NITZ_API_URL")}/reporter/all')
 
 
 async def fetch_puuid(tag_line: str, summoner_name: str, region: str):
-    summoner_data = await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/account/{region}/{summoner_name}/{tag_line}')
+    summoner_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/account/{region}/{summoner_name}/{tag_line}')
     return summoner_data['puuid']
 
 def fetch_first_summoner_puuid_task():
@@ -40,11 +40,11 @@ def fetch_first_summoner_matches_task():
     return asyncio.run(fetch_first_summoner_matches(root_puuid))
 
 async def fetch_first_summoner_matches(puuid: str):
-    return await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/match/by-puuid/{puuid}')
+    return await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/match/by-puuid/{puuid}')
 
 
 async def fetch_match_participants(match_id: str):
-    match_data = await request_with_handle('GET', f'{os.getenv('NITZ_API_URL')}/match/by-match-id/{match_id}')
+    match_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/match/by-match-id/{match_id}')
     match_participants = match_data['metadata']['participants']
 
     return match_participants

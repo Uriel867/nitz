@@ -1,8 +1,8 @@
-import aiohttp
 import asyncio
+import aiohttp
 from airflow.exceptions import AirflowException, AirflowFailException
 
-RETRY_REQUESTS = [429 ,500, 502, 503,504]
+RETRY_REQUESTS = [429 , 500, 502, 503, 504]
 FAIL_REQUESTS = [404]
 
 _TIMEOUT = aiohttp.ClientTimeout(total=900)  # 15 minutes overall timeout
@@ -18,15 +18,15 @@ async def request_with_handle(method: str, url: str, retries=5, **kwargs):
                         return await response.json()
                     return None # on successful POST request
         except aiohttp.ClientResponseError as e:
-           if e.status in FAIL_REQUESTS and attempt == retries - 1:
-               raise AirflowFailException(f'Request failed with exception {e} - failing task')
+            if e.status in FAIL_REQUESTS and attempt == retries - 1:
+                raise AirflowFailException(f'Request failed with exception {e} - failing task') from e
 
-           if e.status in RETRY_REQUESTS and attempt == retries - 1:
-               raise AirflowException(f'API request failed with exception {e} - retrying ask')
+            if e.status in RETRY_REQUESTS and attempt == retries - 1:
+                raise AirflowException(f'API request failed with exception {e} - retrying ask') from e
 
         except asyncio.TimeoutError:
             if attempt== retries - 1:
-                raise AirflowException(f'API request timed out for {method} {url}')
+                raise AirflowException(f'API request timed out for {method} {url}') from e
 
         await asyncio.sleep(1)
 

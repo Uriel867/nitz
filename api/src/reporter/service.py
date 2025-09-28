@@ -1,5 +1,5 @@
-from pymongo import MongoClient
 from typing import Dict
+from pymongo import MongoClient
 
 class LoLStatsService:
     
@@ -45,7 +45,7 @@ class LoLStatsService:
         except Exception as e:
             return {"error": f"An error occurred while fetching match data: {e}", "success": False}
         
-    def insert_match_data_by_id(self,match_id: str, match_data: Dict):
+    def insert_match_data_by_id(self, match_id: str, match_data: Dict):
         try:
             result = self.matches_collection.insert_one({"match_id": match_id, "match_data": match_data})
             return {"message": f"Inserted match data with ID: {str(result.inserted_id)}", "success": True}

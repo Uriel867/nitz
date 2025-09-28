@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Query, Depends
 from typing import Annotated
+from fastapi import APIRouter, Query, Depends
 
 from scraper.service import ScraperService
 from scraper.models import LeagueOfGraphsModel

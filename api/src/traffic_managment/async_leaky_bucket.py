@@ -2,7 +2,7 @@ import asyncio
 from .leaky_bucket import LeakyBucket
 
 class AsyncLeakyBucket:
-    def __init__(self,capacity, leak_rate):
+    def __init__(self, capacity, leak_rate):
         self.bucket = LeakyBucket(capacity=capacity, leak_rate_per_sec=leak_rate)
         self._lock = asyncio.Lock()  # atomic check+reserve across tasks
 
