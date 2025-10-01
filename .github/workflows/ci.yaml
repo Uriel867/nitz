@@ -61,8 +61,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apk update
-          apk add git
           python3 -m pip install -r api/requirements.txt
 
       - name: Run tests
