@@ -18,7 +18,7 @@ class LoLStatsService:
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}
                 
-    def insert_many_summoners(self,summoners_list: list):
+    def insert_many_summoners(self, summoners_list: list):
         try:
             summoners = self.summoners_collection.insert_many(summoners_list)
             return {"message": f"Inserted {len(summoners.inserted_ids)} documents", "success": True}
