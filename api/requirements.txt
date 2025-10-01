@@ -8,4 +8,5 @@ cloudscraper
 aiohttp
 pymongo
 sqlalchemy
+httpx
 pytest
