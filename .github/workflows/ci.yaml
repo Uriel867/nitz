@@ -2,16 +2,14 @@ name: API Tests
 on:
   # get triggered only if the linter finished successfully
   workflow_run:
-    workflows:
-      - 'Python Linter'
+    workflows: [ "Python Linter" ]
     types:
       - completed
-  workflow_dispatch:
 
 
 jobs:
   api-tests:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-22.04
     env:
       RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
