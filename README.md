@@ -15,3 +15,71 @@ Our course of actions is as follows:
 - In parallel, we'll be developing the frontend for users to be able to use the application.
 - Lastly, hosting the backend on the cloud.
 
+As for the architecture of the application, we've separated it into 3 main flows:
+
+1. Inference
+```mermaid
+sequenceDiagram
+    actor Client
+    participant FastAPI
+    participant Redis
+    participant PostgreSQL
+    participant RiotAPI
+    participant PredictionService
+    participant ModelRegistry
+    
+    Client ->> FastAPI: (1) Request prediction
+    FastAPI ->> Redis: (2.1.1) Check if match data exists in cache
+    Redis ->> FastAPI: (2.1.2) Get match data from cache
+    FastAPI ->> PostgreSQL: (2.2.1) Request match data
+    PostgreSQL ->> FastAPI: (2.2.2) Get match data
+    PostgreSQL ->> Redis: (2.2.3) Cache data
+    FastAPI ->> RiotAPI: (2.3.1) Request match data
+    RiotAPI ->> FastAPI: (2.3.2) Get match data
+    FastAPI ->> PostgreSQL: (2.3.3) Report data
+    PostgreSQL ->> Redis: (2.3.4) Cache data
+    FastAPI ->> PredictionService: (3) Request prediction
+    PredictionService ->> PredictionService: (3.1) preprocessing
+    PredictionService ->> ModelRegistry: (3.2) Request best model
+    ModelRegistry ->> PredictionService: (3.3) Get best model
+    PredictionService ->> PredictionService: (3.4) Predict
+    PredictionService ->> PostgreSQL: (3.5) Report prediction
+    PredictionService ->> FastAPI: (4) Get prediction
+    FastAPI ->> Client: (5) Display prediction
+    
+    
+```
+
+2. Data gathering and ETL processes.
+
+```mermaid
+---
+title: ETL from MongoDB to PostgreSQL
+---
+flowchart LR
+    api[FastAPI]
+    riotAPI[Riot Games API]
+    dataPipeline[Airflow]
+    mongodb[(MongoDB)]
+    postgres[(PostgreSQL)]
+    
+    dataPipeline <-->|fetch existing data| api <-->|fetch existing data| mongodb
+    dataPipeline -->|transform and load| postgres
+    api <-->|fetch additional data| riotAPI
+```
+
+3. Data consuming and ML model training
+```mermaid
+---
+title: ML model training and inference
+---
+flowchart LR
+    model[Model Service]
+    mlflow[(Model Registry)]
+    api[FastAPI]
+    postgres[(PostgreSQL)]
+    
+    model <-->|fetch data for training| api <-->|fetch data for training| postgres
+    model -->|package trained model| mlflow
+
+```
