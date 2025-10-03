@@ -15,7 +15,7 @@ Our course of actions is as follows:
 - In parallel, we'll be developing the frontend for users to be able to use the application.
 - Lastly, hosting the backend on the cloud.
 
-As for the architecture of the application, we've separated it into 3 main flows:
+As for the architecture of the application, we've separated it into 2 main flows:
 
 1. Inference
 ```mermaid
@@ -66,20 +66,4 @@ flowchart LR
     dataPipeline <-->|fetch existing data| api <-->|fetch existing data| mongodb
     dataPipeline -->|transform and load| postgres
     api <-->|fetch additional data| riotAPI
-```
-
-3. Data consuming and ML model training
-```mermaid
----
-title: ML model training and inference
----
-flowchart LR
-    model[Model Service]
-    mlflow[(Model Registry)]
-    api[FastAPI]
-    postgres[(PostgreSQL)]
-    
-    model <-->|fetch data for training| api <-->|fetch data for training| postgres
-    model -->|package trained model| mlflow
-
 ```
