@@ -1,0 +1,1 @@
+INSERT INTO api.summoner_info VALUES ('123','uri','ziv');

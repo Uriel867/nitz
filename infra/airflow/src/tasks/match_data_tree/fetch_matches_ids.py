@@ -13,7 +13,7 @@ async def fetch_all_summoners():
 
 
 async def fetch_puuid(tag_line: str, summoner_name: str, region: str):
-    summoner_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/account/{region}/{summoner_name}/{tag_line}')
+    summoner_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/account/by-id/{region}/{summoner_name}/{tag_line}')
     return summoner_data['puuid']
 
 def fetch_first_summoner_puuid_task():
