@@ -1,25 +1,23 @@
 import asyncio
-import aiohttp
 import logging
+import aiohttp
 from airflow.exceptions import AirflowException, AirflowFailException
 
 RETRY_REQUESTS = [422, 429 , 500, 502, 503, 504]
 FAIL_REQUESTS = [404]
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) # using this to print into the airflow ui
 _TIMEOUT = aiohttp.ClientTimeout(total=900)  # 15 minutes overall timeout
 
-async def request_with_handle(method: str, url: str, retries=20, **kwargs):
+async def request_with_handle(method: str, url: str, retries=10, **kwargs):
     for attempt in range(retries):
         try:
             async with aiohttp.ClientSession(timeout=_TIMEOUT) as session:
-                #response = await session.request(method, url, **kwargs)
                 async with session.request(method, url, **kwargs) as response:
                     response.raise_for_status()
                     if method == 'GET':
-                        if await response.json() == None:
-                            logger.error(f'Recieved None')
                         return await response.json()
                     return None # on successful POST request
+
         except aiohttp.ClientResponseError as e:
             if e.status in FAIL_REQUESTS and attempt == retries - 1:
                 raise AirflowFailException(f'Request failed with exception {e} - failing task') from e
@@ -31,7 +29,7 @@ async def request_with_handle(method: str, url: str, retries=20, **kwargs):
             if attempt== retries - 1:
                 raise AirflowException(f'API request timed out for {method} {url}') from e
 
-        wait_time = 2 ** attempt
+        wait_time = 2 ** attempt # exponential backoff - each attempt makes it wait longer before the next call
         await asyncio.sleep(wait_time)
 
     raise AirflowException(f"All {retries} retry attempts failed for {method} {url}.")
