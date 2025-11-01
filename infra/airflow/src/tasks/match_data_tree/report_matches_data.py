@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 #iterate through the list of matches and report each one
 async def fetch_and_report_match(match_id: str):
-    logger.info('Fetching match %s',match_id)
+    logger.info('Fetching match %s', match_id)
     match_data = await fetch_match_data(match_id)
     logger.info('Fetched match %s', match_id)
     await report_match(match_id, match_data)
