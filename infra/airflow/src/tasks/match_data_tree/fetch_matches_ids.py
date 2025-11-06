@@ -5,6 +5,7 @@ from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
 from utils.http_requests import request_with_handle
 
+# returns a list of all summoners in mongodb
 def fetch_all_summoners_task():
     return asyncio.run(fetch_all_summoners())
 
@@ -13,9 +14,10 @@ async def fetch_all_summoners():
 
 
 async def fetch_puuid(tag_line: str, summoner_name: str, region: str):
-    summoner_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/account/{region}/{summoner_name}/{tag_line}')
+    summoner_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/account/by-id/{region}/{summoner_name}/{tag_line}')
     return summoner_data['puuid']
 
+# returns the first summoner in the summoners list
 def fetch_first_summoner_puuid_task():
     current_task = get_current_context()['ti']  # ti - current task instance
     summoners = current_task.xcom_pull(task_ids='all_summoner_list')
@@ -43,6 +45,7 @@ async def fetch_first_summoner_matches(puuid: str):
     return await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/match/by-puuid/{puuid}')
 
 
+# returns the the participants puuids of a match
 async def fetch_match_participants(match_id: str):
     match_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/match/by-match-id/{match_id}')
     match_participants = match_data['metadata']['participants']
@@ -52,17 +55,20 @@ async def fetch_match_participants(match_id: str):
 def fetch_matches_ids_task(depth: int):
     return asyncio.run(fetch_matches_ids(depth))
 
+
+# gathers matches ids by collecting matches from different summoners
 async def fetch_matches_ids(depth: int):
     current_task = get_current_context()['ti']  # ti - current task instance
     matches_ids = current_task.xcom_pull(task_ids='fetch_first_summoner_matches')
-    root_puuid = current_task.xcom_pull(task_ids='fetch_first_summoner_puuid')
+    root_puuid = current_task.xcom_pull(task_ids='fetch_first_summoner_puuid') # starting from this summoner
 
     matches_participants = []
     seen_puuids = {root_puuid}
     seen_matches = set()
-    match_ids_index  = 0
-    matches_participants_index = 0
+    match_ids_index  = 0 # tracks length of matches_ids
+    matches_participants_index = 0 # tracks length of matches_participants
 
+    # how deep we want the matches ids "tree" to be
     while depth > 0:
         match_ids_index = await fetch_puuids_from_matches(matches_ids, seen_puuids, matches_participants, match_ids_index)
         matches_participants_index = await fetch_matches_ids_from_participants(matches_ids, matches_participants, seen_matches, matches_participants_index)
@@ -70,6 +76,7 @@ async def fetch_matches_ids(depth: int):
 
     return matches_ids
 
+# iterates over all matches we have and extracts participants from each one
 async def fetch_puuids_from_matches(matches_ids: List[str], seen_puuids: set[str], matches_participants: List[str], index: int):
     while index < len(matches_ids):
         for puuid in await fetch_match_participants(matches_ids[index]):
@@ -79,6 +86,7 @@ async def fetch_puuids_from_matches(matches_ids: List[str], seen_puuids: set[str
         index += 1
     return index
 
+# iterates over the participants we gathered and extracts their latest matches ids
 async def fetch_matches_ids_from_participants(matches_ids: List[str], matches_participants: List[str], seen_matches: set[str], index: int):
     while index < len(matches_participants):
         for match_id in await fetch_first_summoner_matches(matches_participants[index]):

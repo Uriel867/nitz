@@ -1,7 +1,5 @@
 include:
   - path: infra/airflow/docker-compose.yaml
-    ports:
-      - 8080:8080
     env_file:
       - .env.global
       - infra/airflow/.env
@@ -16,8 +14,6 @@ services:
     depends_on:
       mongodb:
         condition: service_started
-    ports:
-      - 81:8080
     networks:
       - lol_api_network
 
@@ -54,6 +50,16 @@ services:
     env_file:
       - .env.global
       - ./infra/postgres/.env
+    networks:
+      - lol_api_network
+
+  nginx:
+    build: ./infra/nginx
+    ports:
+      - 80:80
+    depends_on:
+      api:
+        condition: service_started
     networks:
       - lol_api_network
 

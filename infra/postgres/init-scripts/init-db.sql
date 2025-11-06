@@ -6,8 +6,8 @@ CREATE SCHEMA IF NOT EXISTS airflow;
 
 CREATE TABLE IF NOT EXISTS api.summoner_info (
     puuid TEXT PRIMARY KEY,
-    summoner_name TEXT,
-    battle_tag TEXT
+    game_name TEXT,
+    tag_line TEXT
 );
 
 CREATE TABLE IF NOT EXISTS api.match_id (
