@@ -4,6 +4,7 @@ from typing import List
 from airflow.exceptions import AirflowException
 from airflow.operators.python import get_current_context
 from utils.http_requests import request_with_handle
+from utils.fetch_puuid import fetch_puuid
 
 # returns a list of all summoners in mongodb
 def fetch_all_summoners_task():
@@ -11,11 +12,6 @@ def fetch_all_summoners_task():
 
 async def fetch_all_summoners():
     return await request_with_handle('GET', f'{os.getenv("NITZ_API_URL")}/reporter/all')
-
-
-async def fetch_puuid(tag_line: str, summoner_name: str, region: str):
-    summoner_data = await request_with_handle(method='GET', url=f'{os.getenv("NITZ_API_URL")}/account/by-id/{region}/{summoner_name}/{tag_line}')
-    return summoner_data['puuid']
 
 # returns the first summoner in the summoners list
 def fetch_first_summoner_puuid_task():
