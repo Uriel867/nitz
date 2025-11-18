@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from dags import default_args
-from tasks.summoners_etl.mongo_to_postgres import (
+from tasks.summoners_etl.summoners_etl import (
     fetch_all_summoners_task,
     prepare_summoners_task,
     insert_summoners_to_postgres_task
@@ -11,7 +11,7 @@ def triggerer():
     return True
 
 with DAG(
-        dag_id='summoners_mongo_to_postgres',
+        dag_id='summoners_etl',
         default_args=default_args,
         catchup=False,
 

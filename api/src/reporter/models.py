@@ -14,5 +14,10 @@ class SummonerModel(BaseModel):
     def validate_tag_line(self):
         if self.tag_line is None:
             raise ValueError("tag_line cannot be empty")
+        return self
 
+    @model_validator(mode='after')
+    def validate_puuid(self):
+        if self.puuid is None:
+            raise ValueError("Puuid cannot be empty")
         return self

@@ -3,7 +3,10 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from utils.fetch_all_summoners import fetch_all_summoners
 from utils.fetch_puuid import fetch_puuid
 from airflow.operators.python import get_current_context
+import logging
 import asyncio
+
+logger = logging.getLogger("airflow.task")
 
 def fetch_all_summoners_task():
     return asyncio.run(fetch_all_summoners())
@@ -17,11 +20,13 @@ def prepare_summoners_task():
 # prepare the summoner data that will be inserted into postgres
 async def prepare_summoners(summoners: List[dict]):
     rows_to_insert = []
+    i = 0
 
     for summoner in summoners:
         game_name = summoner['game_name']
         tag_line = summoner['tag_line']
         region = summoner['region']
+        logger.info(f'Fetching summoner number {i} out of {len(summoners)}')
         puuid = await fetch_puuid(tag_line, game_name, region)
 
         rows_to_insert.append(
@@ -31,7 +36,6 @@ async def prepare_summoners(summoners: List[dict]):
                  tag_line,
             )
         )
-
     return rows_to_insert
 
 

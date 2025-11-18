@@ -2,8 +2,8 @@ import os
 import asyncio
 import logging
 from typing import List
-
 from utils.http_requests import request_with_handle
+
 logger = logging.getLogger(__name__)
 
 #iterate through the list of matches and report each one
