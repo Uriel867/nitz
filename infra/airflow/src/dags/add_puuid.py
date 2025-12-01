@@ -27,7 +27,7 @@ with DAG(
         python_callable=fetch_all_summoners_task
     )
 
-    matches_ids_chunks_task = PythonOperator(
+    make_chunks = PythonOperator(
         task_id=f'make_chunks',
         python_callable=make_chunks_task,
         op_kwargs={'task_id': 'fetch_all_summoners',
@@ -38,7 +38,7 @@ with DAG(
         task_id=f'report_chunk',
         python_callable=fetch_and_report_chunk_task,
     ).expand(
-        op_kwargs=matches_ids_chunks_task.output.map(
+        op_kwargs=make_chunks.output.map(
             lambda chunk: {
                 "chunk": chunk,
                 "fetch_url": f'{os.getenv("NITZ_API_URL")}/account/by-id',
@@ -50,4 +50,4 @@ with DAG(
     )
 
 
-    triggerer_task >> fetch_all_summoners_task >> matches_ids_chunks_task >> report_chunks_task
+    triggerer_task >> fetch_all_summoners_task >> make_chunks >> report_chunks_task
