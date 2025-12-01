@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from dags import default_args
 from utils.make_chunks import make_chunks_task
-from utils.report_data import fetch_and_report_chunk_task
+from utils.fetch_and_report_data import fetch_and_report_chunk_task
 from utils.fetch_all_summoners import fetch_all_summoners_task
 import os
 

@@ -5,7 +5,7 @@ from tasks.match_data_tree.fetch_matches_ids import (
     fetch_all_summoners_task, fetch_first_summoner_puuid_task, fetch_matches_ids_task,
     fetch_first_summoner_matches_task)
 from utils.make_chunks import make_chunks_task
-from utils.report_data import fetch_and_report_chunk_task
+from utils.fetch_and_report_data import fetch_and_report_chunk_task
 import os
 
 def triggerer():
