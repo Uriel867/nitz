@@ -7,7 +7,7 @@ start_page = Variable.get('START_PAGE', default_var=1)
 end_page = Variable.get('END_PAGE', default_var=1)
 
 
-REGIONS = [
+SUB_REGIONS = [
     'br',
     'eune',
     'euw',

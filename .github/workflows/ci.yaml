@@ -17,7 +17,7 @@ jobs:
       - name: Initial checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.head_ref }} # comment this line when running locally
 
       - name: Setup python 3.11
         uses: actions/setup-python@v5

@@ -1,6 +1,7 @@
-from .http_requests import request_with_handle
 import os
 import logging
+
+from .http_requests import request_with_handle
 
 logger = logging.getLogger(__name__)
 

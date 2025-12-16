@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from dags import default_args
-from tasks.scrape_and_report.scrape import REGIONS, scrape, start_page, end_page
+from tasks.scrape_and_report.scrape import SUB_REGIONS, scrape, start_page, end_page
 from tasks.scrape_and_report.report_summoners import report_summoners_task
 
 
@@ -19,22 +19,22 @@ with DAG(
     )
 
     # scrape for each region
-    for region in REGIONS:
+    for sub_region in SUB_REGIONS:
         scrape_task = PythonOperator(
-            task_id=f'scrape_{region}',
+            task_id=f'scrape_{sub_region}',
             python_callable=scrape,
             op_kwargs={
                 'start_page': start_page,
                 'end_page': end_page,
-                'sub_region': region,
+                'sub_region': sub_region,
             },
         )
 
         # report for each region
         report_task = PythonOperator(
-            task_id=f'report_{region}',
+            task_id=f'report_{sub_region}',
             python_callable=report_summoners_task,
-            op_kwargs={'region': region},
+            op_kwargs={'sub_region': sub_region},
         )
 
         # Airflow runs them in a parallel way and not one by one

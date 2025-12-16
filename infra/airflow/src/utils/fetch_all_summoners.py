@@ -1,7 +1,7 @@
 import os
 import asyncio
-from .http_requests import request_with_handle
 import logging
+from .http_requests import request_with_handle
 
 logger = logging.getLogger(__name__)
 

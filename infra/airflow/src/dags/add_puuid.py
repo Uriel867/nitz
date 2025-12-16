@@ -1,10 +1,10 @@
+import os
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from dags import default_args
 from utils.make_chunks import make_chunks_task
 from utils.fetch_and_report_data import fetch_and_report_chunk_task
 from utils.fetch_all_summoners import fetch_all_summoners_task
-import os
 
 def triggerer():
     return True
@@ -28,14 +28,14 @@ with DAG(
     )
 
     make_chunks = PythonOperator(
-        task_id=f'make_chunks',
+        task_id='make_chunks',
         python_callable=make_chunks_task,
         op_kwargs={'task_id': 'fetch_all_summoners',
                    'chunk_size': 10},
     )
 
     report_chunks_task = PythonOperator.partial(
-        task_id=f'report_chunk',
+        task_id='report_chunk',
         python_callable=fetch_and_report_chunk_task,
     ).expand(
         op_kwargs=make_chunks.output.map(
