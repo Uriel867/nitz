@@ -26,7 +26,7 @@ with DAG(
             op_kwargs={
                 'start_page': start_page,
                 'end_page': end_page,
-                'region': region,
+                'sub_region': region,
             },
         )
 
