@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import List
+from typing import List, Union, Dict
 from utils.http_requests import request_with_handle
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ async def fetch_and_report_chunk(chunk: List[str], fetch_url: str, report_url: s
 
     await asyncio.gather(*chunk_data)
 
-async def fetch_and_report(item: list[str] | str, fetch_url: str, report_url: str, summoner: bool, match: bool):
+async def fetch_and_report(item: Union[Dict[str, str], str], fetch_url: str, report_url: str, summoner: bool, match: bool):
     data = None
     if summoner:
         game_name = item['game_name']
