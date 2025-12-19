@@ -46,7 +46,7 @@ async def report_data(method: str, report_url: str, data_to_report: List[any], s
             'tag_line': data_to_report[1],
             'puuid': data_to_report[2].get('puuid'),
         }
-        return await request_with_handle(method,report_url, json=json)
+        return await request_with_handle(method, report_url, json=json)
 
     if match:
         params = {
@@ -55,4 +55,4 @@ async def report_data(method: str, report_url: str, data_to_report: List[any], s
 
         json = data_to_report[1]
 
-        return await request_with_handle(method,report_url, json=json, params=params)
+        return await request_with_handle(method, report_url, json=json, params=params)

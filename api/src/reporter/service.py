@@ -11,7 +11,7 @@ class LoLStatsService:
         
     #summoners
     
-    def insert_summoner(self,puuid: str, game_name: str, tag_line: str):
+    def insert_summoner(self, puuid: str, game_name: str, tag_line: str):
         try:
             result = self.summoners_collection.insert_one({"puuid": puuid, "game_name": game_name, "tag_line": tag_line})
             return {"message": f"Inserted document with ID: {str(result.inserted_id)}", "success": True}
