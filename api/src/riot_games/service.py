@@ -13,7 +13,7 @@ class RiotGamesService:
     def get_account_by_riot_id(self, tag_line: str, game_name: str, region: str='europe'):
         base_url = self.base_url.replace(self.region_placeholder, region)
         url = f'{base_url}/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}'
-        
+
         response = requests.get(url, headers=self.headers)
         # if "status" in response.json().keys():
         #     return {"success":False}

@@ -17,7 +17,7 @@ jobs:
       - name: Initial checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.head_ref }} # comment this line when running locally
 
       - name: Setup python 3.11
         uses: actions/setup-python@v5
@@ -36,7 +36,6 @@ jobs:
 
       - name: Update branch with linter changes
         run: |
-          if  ! $ACT ; then
           if ! git diff --quiet; then
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -45,7 +44,6 @@ jobs:
             git push origin HEAD:$(git branch --show-current)
           else
             echo "All good."
-          fi
           fi
 
   api-tests:

@@ -24,7 +24,7 @@ def test_insert_summoner_success():
     svc = LoLStatsService(client)
 
     # Act
-    res = svc.insert_summoner("playerName", "TAG")
+    res = svc.insert_summoner("PUUID", "GAME_NAME", "TAG_LINE")
 
     # Assert
     assert isinstance(res, dict)
@@ -42,7 +42,7 @@ def test_insert_summoner_exception():
     svc = LoLStatsService(client)
 
     # Act
-    res = svc.insert_summoner("playerName", "TAG")
+    res = svc.insert_summoner("PUUID", "GAME_NAME", "TAG_LINE")
 
     # Assert
     assert isinstance(res, dict)

@@ -7,7 +7,7 @@ start_page = Variable.get('START_PAGE', default_var=1)
 end_page = Variable.get('END_PAGE', default_var=1)
 
 
-REGIONS = [
+SUB_REGIONS = [
     'br',
     'eune',
     'euw',
@@ -15,9 +15,9 @@ REGIONS = [
     'kr',
     'lan',
     'las',
-    'me',
+    #'me', not working for now
     'na',
-    'oce',
+ #   'oce', not working for now
     'ru',
     'sea',
     'tr',
@@ -25,11 +25,11 @@ REGIONS = [
     'vn'
 ]
 
-def scrape(start_page: int, end_page: int, region: str):
+def scrape(start_page: int, end_page: int, sub_region: str):
     query_params = {
         'start_page': start_page,
         'end_page': end_page,
-        'region': region
+        'sub_region': sub_region
     }
     return asyncio.run(scrape_pages(query_params))
 

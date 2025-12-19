@@ -11,12 +11,19 @@ class LoLStatsService:
         
     #summoners
     
-    def insert_summoner(self, game_name: str, tag_line: str):
+    def insert_summoner(self, puuid: str, game_name: str, tag_line: str):
         try:
-            result = self.summoners_collection.insert_one({"game_name": game_name, "tag_line": tag_line})
+            result = self.summoners_collection.insert_one({"puuid": puuid, "game_name": game_name, "tag_line": tag_line})
             return {"message": f"Inserted document with ID: {str(result.inserted_id)}", "success": True}
         except Exception as e:
             return {"error": f"An error occurred while inserting data: {e}", "success": False}
+
+    def add_puuid(self, puuid: str, game_name: str, tag_line: str):
+        try:
+            result = self.summoners_collection.update_one({"game_name": game_name, "tag_line": tag_line}, {"$set": {"puuid": puuid}})
+            return {"message": f"Found : {str(result.matched_count)} to update", "success": True}
+        except Exception as e:
+            return {"error": f"An error occurred while updating data: {e}", "success": False}
                 
     def insert_many_summoners(self, summoners_list: list):
         try:

@@ -9,12 +9,14 @@ disable=
     C0116, # missing function/method docstring
     C0303, # trailing whitespaces
     R0903, # too few public methods
+    R0801, # Similar lines in 2 files
     W0511, # TODOs
     W0621, # redefining name from outer scope
     W0104, # no effect statements
     W0718, # too general exception (enable this and fix!!!)
     C0301, # line too long
-    E0401 # unknown imports
+    E0401, # unknown imports
+    W1203 #use lazy % formatting in logging functions
 
 [FORMAT]
 max-line-length=88

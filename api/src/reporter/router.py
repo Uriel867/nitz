@@ -35,7 +35,7 @@ def insert_summoner(
     
     :param summoner_data: Summoner data to be inserted (received from API request)
     """
-    return service.insert_summoner(game_name=model.game_name, tag_line=model.tag_line)
+    return service.insert_summoner(puuid=model.puuid, game_name=model.game_name, tag_line=model.tag_line)
 
 @router.post("/multiple")
 def insert_many_summoners(
@@ -59,3 +59,10 @@ def get_all_summoners(
     :return: List of all summoners or a message if no summoners are found
     """
     return service.get_all_summoners()
+
+@router.patch("/summoner/add-puuid")
+def update_summoner(
+        model: SummonerModel,
+        service: LoLStatsServiceDependency,
+):
+    return service.add_puuid(puuid=model.puuid, game_name=model.game_name, tag_line=model.tag_line)
