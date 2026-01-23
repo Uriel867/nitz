@@ -11,28 +11,25 @@ on:
 jobs:
   pylint:
     runs-on: ubuntu-22.04
+    container:
+      image: python:3.13-alpine3.22
     permissions:
       contents: write
     steps:
       - name: Initial checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
-      - name: Setup python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+      - name: Install uv
+        run: apk add curl && curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install pylint ruff
+          uv sync --extra linter
 
       - name: Run linter
         run: |
-          ruff check . --select=E231 --fix --preview
-          find . -name '*.py' | xargs pylint --rcfile=.pylintrc
+          uv run ruff check . --select=E231 --fix --preview
+          find . -name '*.py' | grep -v .venv | xargs uv run pylint --rcfile=.pylintrc
 
       - name: Update branch with linter changes
         run: |
@@ -51,20 +48,18 @@ jobs:
   api-tests:
     needs: pylint
     runs-on: ubuntu-22.04
-    env:
-      RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
-      MONGODB_URL: ${{ secrets.MONGODB_URL }}
-      POSTGRES_DB_URL: ${{ secrets.POSTGRES_DB_URL }}
     container:
       image: python:3.13-alpine3.22
     steps:
       - name: Initial checkout
         uses: actions/checkout@v4
 
+      - name: Install uv
+        run: apk add curl && curl -LsSf https://astral.sh/uv/install.sh | sh
+
       - name: Install dependencies
         run: |
-          python3 -m pip install -r api/requirements.txt
+          uv sync --extra test --extra api
 
       - name: Run tests
-        run: pytest
-        working-directory: api/src/tests
+        run: uv run pytest api/src/tests
