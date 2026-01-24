@@ -11,8 +11,13 @@ on:
 jobs:
   pylint:
     runs-on: ubuntu-22.04
+    strategy:
+      # to allow several python version (airflow, api, etc.)
+      matrix:
+        python-version:
+          - 3.13
     container:
-      image: python:3.13-alpine3.22
+      image: python:${{ matrix.python-version }}-alpine3.22
     permissions:
       contents: write
     steps:
@@ -48,8 +53,13 @@ jobs:
   api-tests:
     needs: pylint
     runs-on: ubuntu-22.04
+    strategy:
+      # to allow several python version (airflow, api, etc.)
+      matrix:
+        python-version:
+          - 3.13
     container:
-      image: python:3.13-alpine3.22
+      image: python:${{ matrix.python-version }}-alpine3.22
     steps:
       - name: Initial checkout
         uses: actions/checkout@v4
