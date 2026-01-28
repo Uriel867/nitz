@@ -1,0 +1,30 @@
+[project]
+name = "nitz"
+version = "0.1.0"
+description = "nitz"
+readme = "README.md"
+requires-python = ">=3.13"
+
+[project.optional-dependencies]
+api = [
+    "beautifulsoup4==4.13.3",
+    "fastapi[standard]==0.115.13",
+    "requests",
+    "lxml[html_clean]",
+    "requests-html",
+    "pyppeteer",
+    "cloudscraper",
+    "aiohttp",
+    "pymongo",
+    "sqlalchemy",
+    "httpx"
+]
+
+test = [
+    "pytest"
+]
+
+linter = [
+    "pylint",
+    "ruff"
+]
