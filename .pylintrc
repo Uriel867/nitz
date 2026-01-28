@@ -1,5 +1,6 @@
 [MASTER]
-ignore=.github
+ignore=.github,.venv,venv
+ignore-patterns=.*\.egg-info,.*\.pytest_cache,.*\.venv
 max-line-length=88
 
 [MESSAGES CONTROL]
