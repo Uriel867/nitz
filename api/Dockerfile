@@ -16,6 +16,7 @@ RUN uv sync --extra api
 
 # copy service files
 COPY api/src /workspace/src/
+COPY api/conf /workspace/conf/
 
 WORKDIR /workspace/src
 

@@ -17,7 +17,8 @@ api = [
     "aiohttp",
     "pymongo",
     "sqlalchemy",
-    "httpx"
+    "httpx",
+    "redis"
 ]
 
 test = [

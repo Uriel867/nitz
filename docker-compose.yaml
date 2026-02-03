@@ -9,17 +9,17 @@ services:
     build:
       context: . # to allow copying the pyproject.toml
       dockerfile: api/Dockerfile
+    deploy:
+      replicas: 2
+    restart: always
     volumes:
       - ./api/src:/workspace/src
-    # don't start if overfast api hasn't started yet
     depends_on:
       mongodb:
         condition: service_started
     networks:
       - lol_api_network
-
     # checking service is up every 5 seconds
-   
     healthcheck:
       test: ["CMD-SHELL", "curl http://0.0.0.0:8080/health || exit 1"]
       interval: 60s
@@ -35,6 +35,7 @@ services:
     
   mongodb:
     build: infra/mongodb
+    restart: always
     ports:
       - "27017:27017"
     # volumes:
@@ -46,18 +47,35 @@ services:
 
   postgres:
     build: infra/postgres
+    restart: always
     ports:
-      - 5555:5432
+      - "5432:5432"
     env_file:
       - .env.global
       - ./infra/postgres/.env
     networks:
       - lol_api_network
 
+  redis:
+    # Redis is limited to 7.2-bookworm due to licencing change
+    # https://redis.io/blog/redis-adopts-dual-source-available-licensing/
+    image: redis:7.2-bookworm
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+    restart: always
+    networks:
+      - lol_api_network
+
   nginx:
     build: ./infra/nginx
     ports:
-      - 80:80
+      - "80:80"
     depends_on:
       api:
         condition: service_started
