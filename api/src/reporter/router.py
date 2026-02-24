@@ -9,27 +9,17 @@ LoLStatsServiceDependency = Annotated[LoLStatsService, Depends(provide_lol_stats
 
 
 @router.get("/by-id/{match_id}")
-def get_match_data_by_id(
-    match_id: str,
-    service: LoLStatsServiceDependency
-):
+def get_match_data_by_id(match_id: str, service: LoLStatsServiceDependency):
     return service.get_match_data_by_id(match_id=match_id)
 
 @router.post("/match")
-def insert_match_data_by_id(
-    match_id: str,
-    match_data: Dict,
-    service: LoLStatsServiceDependency
-):
+def insert_match_data_by_id(match_id: str, match_data: Dict, service: LoLStatsServiceDependency):
     
     return service.insert_match_data_by_id(match_id=match_id, match_data=match_data)
 
 
 @router.post("/summoner")  
-def insert_summoner(
-    model: SummonerModel,
-    service: LoLStatsServiceDependency
-):
+def insert_summoner(model: SummonerModel, service: LoLStatsServiceDependency):
     """
     Inserts summoner data directly into the MongoDB collection.
     
@@ -38,10 +28,7 @@ def insert_summoner(
     return service.insert_summoner(puuid=model.puuid, game_name=model.game_name, tag_line=model.tag_line)
 
 @router.post("/multiple")
-def insert_many_summoners(
-    summoner_list: List[Dict],
-    service: LoLStatsServiceDependency
-):
+def insert_many_summoners(summoner_list: List[Dict], service: LoLStatsServiceDependency):
     """
     Inserts multiple summoner data into the MongoDB collection.
     
@@ -50,9 +37,7 @@ def insert_many_summoners(
     return service.insert_many_summoners(summoners_list=summoner_list)
 
 @router.get("/all")
-def get_all_summoners(
-    service: LoLStatsServiceDependency
-):
+def get_all_summoners(service: LoLStatsServiceDependency):
     """
     Retrieves all summoners from the MongoDB collection.
     
@@ -61,8 +46,5 @@ def get_all_summoners(
     return service.get_all_summoners()
 
 @router.patch("/summoner/add-puuid")
-def update_summoner(
-        model: SummonerModel,
-        service: LoLStatsServiceDependency,
-):
+def update_summoner(model: SummonerModel, service: LoLStatsServiceDependency):
     return service.add_puuid(puuid=model.puuid, game_name=model.game_name, tag_line=model.tag_line)

@@ -11,10 +11,9 @@ def triggerer():
     return True
 
 with DAG(
-        dag_id='summoners_etl',
-        default_args=default_args,
-        catchup=False,
-
+    dag_id='summoners_etl',
+    default_args=default_args,
+    catchup=False
 ) as dag:
 
     triggerer_task = PythonOperator(
@@ -22,22 +21,22 @@ with DAG(
         python_callable=triggerer,
     )
 
-    all_summoner_list_task = PythonOperator(
+    all_summoner_list = PythonOperator(
         task_id='all_summoner_list',
         python_callable=fetch_all_summoners_task
     )
 
 
-    prepare_summoners_task = PythonOperator(
+    prepare_summoners = PythonOperator(
         task_id='prepare_summoners',
         python_callable=prepare_summoners_task
     )
 
     # Task 3: Insert the prepared data into Postgres
-    insert_summoners_task = PythonOperator(
+    insert_summoners = PythonOperator(
         task_id='insert_summoners_to_postgres',
         python_callable=insert_summoners_to_postgres_task
     )
 
     # Set the dependencies
-    triggerer_task >> all_summoner_list_task >> prepare_summoners_task >> insert_summoners_task
+    triggerer_task >> all_summoner_list >> prepare_summoners >> insert_summoners

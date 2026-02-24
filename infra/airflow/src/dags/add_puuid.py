@@ -22,7 +22,7 @@ with DAG(
     )
 
     # scrape for each region
-    fetch_all_summoners_task = PythonOperator(
+    fetch_all_summoners = PythonOperator(
         task_id='fetch_all_summoners',
         python_callable=fetch_all_summoners_task
     )
@@ -50,4 +50,4 @@ with DAG(
     )
 
 
-    triggerer_task >> fetch_all_summoners_task >> make_chunks >> report_chunks_task
+    triggerer_task >> fetch_all_summoners >> make_chunks >> report_chunks_task

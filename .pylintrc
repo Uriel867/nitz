@@ -10,6 +10,8 @@ disable=
     C0116, # missing function/method docstring
     C0303, # trailing whitespaces
     R0903, # too few public methods
+    R0913, # too many arguments
+    R0917, # too many positional arguments
     R0801, # Similar lines in 2 files
     W0511, # TODOs
     W0621, # redefining name from outer scope
